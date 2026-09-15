@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://jakarta.ee/xml/ns/jakartaee"
+      xmlns:f="http://jakarta.ee/xml/ns/jakartaee"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <h:outputStylesheet library="css" name="styles.css" />
+        <style>
+            body {
+                margin: 0;
+                background: #eef2ee;
+                font-family: Arial, sans-serif;
+            }
+
+            .login-wrap {
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 24px;
+            }
+
+            div.login {
+                width: min(420px, 90vw);
+                background: #ffffff;
+                border-radius: 12px;
+                padding: 28px 26px 22px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+                text-align: center;
+            }
+
+            .panel-header {
+                margin-bottom: 20px;
+            }
+
+            .logo {
+                width: 160px;
+                max-width: 100%;
+            }
+
+            .panel-body {
+                display: flex;
+                flex-direction: column;
+                gap: 14px;
+            }
+
+            .form-group {
+                width: 100%;
+                margin: 0;
+                text-align: left;
+            }
+
+            .form-control,
+            .ui-inputfield,
+            .ui-password {
+                width: 100%;
+                box-sizing: border-box;
+                height: 42px;
+                padding: 10px 12px;
+                border: 1px solid #dfe5df;
+                border-radius: 8px;
+                font-size: 14px;
+                background: #fff;
+                color: #1f2925;
+            }
+
+            .form-control:focus,
+            .ui-inputfield:focus,
+            .ui-password:focus {
+                border-color: #007738;
+                box-shadow: 0 0 0 3px rgba(0, 119, 56, 0.12);
+                outline: none;
+            }
+
+            .ui-button,
+            .btn-success {
+                width: 100%;
+                height: 42px;
+                border: none;
+                border-radius: 8px;
+                background: #0f7a4a;
+                color: #fff;
+                font-weight: 600;
+                cursor: pointer;
+                text-shadow: none;
+            }
+
+            .ui-button:hover,
+            .btn-success:hover {
+                background: #0c683f;
+            }
+        </style>
+    </h:head>
+
+    <h:body>
+        <div class="login-wrap">
+            <h:form>
+                <p:messages id="messages" showDetail="true" closable="true" />
+
+                <div class="login">
+                    <div class="panel-header">
+                        <h:graphicImage library="images" name="uabcl.png" styleClass="logo" />
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <p:inputText styleClass="form-control" placeholder="Correo:" autocomplete="false" value="#{loginUI.usuario.correo}" />
+                        </div>
+                        <div class="form-group">
+                            <p:password styleClass="form-control" placeholder="Contraseña:" value="#{loginUI.usuario.contrasena}" />
+                        </div>
+                        <p:commandButton update="messages" styleClass="btn btn-success" value="Iniciar sesión" actionListener="#{loginUI.login()}" />
+                    </div>
+                </div>
+            </h:form>
+        </div>
+    </h:body>
+</html>
