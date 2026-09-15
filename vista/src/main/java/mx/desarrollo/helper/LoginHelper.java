@@ -10,16 +10,16 @@ public class LoginHelper implements Serializable {
 
     private final FacadeUsuario facadeUsuario = new FacadeUsuario();
 
-    /**
-     * Metodo para hacer login, llama a la capa de negocio (FacadeUsuario).
-     * @param correo    correo del usuario
-     * @param password  contrasena del usuario
-     * @return el Usuario autenticado, o null si las credenciales son invalidas
-     */
     public Usuario login(String correo, String password) {
         try {
             return facadeUsuario.autenticar(correo, password);
         } catch (ValidacionException e) {
+            // Error de credenciales
+            return null;
+        } catch (Exception e) {
+            // Error inesperado
+            System.err.println("Error inesperado en login: " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }
