@@ -45,7 +45,7 @@ public class LoginBeanUI implements Serializable {
             fc.addMessage(null, new FacesMessage(
                     FacesMessage.SEVERITY_WARN,
                     "Credenciales incorrectas",
-                    "Verifique su correo y contraseña"));
+                    "Verifique su correo  y contraseña"));
         }
     }
 
