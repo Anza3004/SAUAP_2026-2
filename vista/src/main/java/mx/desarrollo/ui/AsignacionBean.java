@@ -38,7 +38,10 @@ public class AsignacionBean implements Serializable {
 
     // Grid data (JSON serializado del JS)
     private String gridData;
-
+    // Horas requeridas de la unidad seleccionada (para JS)
+    private Integer horasClaseSeleccionada = 0;
+    private Integer horasTallerSeleccionada = 0;
+    private Integer horasLabSeleccionada = 0;
     @PostConstruct
     public void init() {
         asignacionActual = new Asignacion();
@@ -54,6 +57,31 @@ public class AsignacionBean implements Serializable {
             unidades = facadeUnidad.consultarUnidades();
         } catch (Exception e) {
             addError("Error al cargar datos: " + e.getMessage());
+        }
+    }
+    /**
+     * Se ejecuta cuando cambia la unidad seleccionada.
+     * Actualiza las horas requeridas para que JS las lea.
+     */
+    public void onUnidadChange() {
+        System.out.println(">>> onUnidadChange llamado. ID: " + idUnidadSeleccionada);
+
+        if (idUnidadSeleccionada == null) {
+            horasClaseSeleccionada = 0;
+            horasTallerSeleccionada = 0;
+            horasLabSeleccionada = 0;
+            return;
+        }
+
+        UnidadAprendizaje u = encontrarUnidad(idUnidadSeleccionada);
+        if (u != null) {
+            horasClaseSeleccionada = u.getHorasClase() != null ? u.getHorasClase().intValue() : 0;
+            horasTallerSeleccionada = u.getHorasTaller() != null ? u.getHorasTaller().intValue() : 0;
+            horasLabSeleccionada = u.getHorasLaboratorio() != null ? u.getHorasLaboratorio().intValue() : 0;
+
+            System.out.println(">>> Horas: Clase=" + horasClaseSeleccionada +
+                    ", Taller=" + horasTallerSeleccionada +
+                    ", Lab=" + horasLabSeleccionada);
         }
     }
 
@@ -275,4 +303,24 @@ public class AsignacionBean implements Serializable {
 
     public String getGridData() { return gridData; }
     public void setGridData(String gridData) { this.gridData = gridData; }
+    public Integer getHorasClaseSeleccionada() {
+        return horasClaseSeleccionada;
+    }
+    public void setHorasClaseSeleccionada(Integer horasClaseSeleccionada) {
+        this.horasClaseSeleccionada = horasClaseSeleccionada;
+    }
+
+    public Integer getHorasTallerSeleccionada() {
+        return horasTallerSeleccionada;
+    }
+    public void setHorasTallerSeleccionada(Integer horasTallerSeleccionada) {
+        this.horasTallerSeleccionada = horasTallerSeleccionada;
+    }
+
+    public Integer getHorasLabSeleccionada() {
+        return horasLabSeleccionada;
+    }
+    public void setHorasLabSeleccionada(Integer horasLabSeleccionada) {
+        this.horasLabSeleccionada = horasLabSeleccionada;
+    }
 }

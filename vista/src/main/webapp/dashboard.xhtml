@@ -75,9 +75,9 @@
             <div class="topbar">
                 <div class="user-menu">
                     <button class="user-chip" id="userToggle" aria-expanded="false">
-                            <span class="avatar">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.8-3.8 3.4-6 7-6s6.2 2.2 7 6"/></svg>
-                            </span>
+                        <span class="avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.8-3.8 3.4-6 7-6s6.2 2.2 7 6"/></svg>
+                        </span>
                         #{sessionBean.usuarioLogueado.correo}
                     </button>
                 </div>
@@ -94,19 +94,23 @@
                 <!-- VISTA ASIGNACIÓN -->
                 <h:panelGroup rendered="#{dashboardBean.vistaAsignacion}" layout="block">
                     <div class="asignacion-container">
-
                         <h2 class="asignacion-title">Asignar Materia a Profesor</h2>
 
                         <h:form id="asignacionForm">
-                            <div class="asignacion-grid-layout">
+                            <!-- Panel con las horas requeridas (SPAN) -->
+                            <h:panelGroup id="horasRequeridas" layout="block">
+                                <span id="dataHorasClase" style="display:none;">#{asignacionBean.horasClaseSeleccionada}</span>
+                                <span id="dataHorasTaller" style="display:none;">#{asignacionBean.horasTallerSeleccionada}</span>
+                                <span id="dataHorasLab" style="display:none;">#{asignacionBean.horasLabSeleccionada}</span>
+                            </h:panelGroup>
 
+                            <div class="asignacion-grid-layout">
                                 <!-- Columna izquierda: controles -->
                                 <div class="asignacion-controles">
                                     <div class="form-group">
                                         <label class="form-label">Profesor</label>
                                         <h:selectOneMenu value="#{asignacionBean.idProfesorSeleccionado}"
-                                                         styleClass="form-select"
-                                                         onchange="recargarCeldas()">
+                                                         styleClass="form-select">
                                             <f:selectItem itemValue="#{null}" itemLabel="-- Seleccionar --" />
                                             <f:selectItems value="#{asignacionBean.profesores}"
                                                            var="p"
@@ -118,13 +122,22 @@
                                     <div class="form-group">
                                         <label class="form-label">Unidad de aprendizaje</label>
                                         <h:selectOneMenu value="#{asignacionBean.idUnidadSeleccionada}"
-                                                         styleClass="form-select"
-                                                         onchange="recargarCeldas()">
+                                                         styleClass="form-select">
                                             <f:selectItem itemValue="#{null}" itemLabel="-- Seleccionar --" />
                                             <f:selectItems value="#{asignacionBean.unidades}"
                                                            var="u"
                                                            itemValue="#{u.id}"
                                                            itemLabel="#{u.nombre}" />
+                                            <f:ajax event="change"
+                                                    execute="@this"
+                                                    listener="#{asignacionBean.onUnidadChange()}"
+                                                    render="horasRequeridas"
+                                                    onevent="function(data) {
+                                                        console.log('AJAX status:', data.status);
+                                                        if (data.status === 'success') {
+                                                            setTimeout(actualizarHorasRequeridas, 300);
+                                                        }
+                                                    }" />
                                         </h:selectOneMenu>
                                     </div>
 
@@ -201,16 +214,16 @@
                 <!-- VISTA PROFESOR (placeholder) -->
                 <h:panelGroup rendered="#{dashboardBean.vistaProfesor}" layout="block">
                     <div class="placeholder-view">
-                        <h2> Modulo de Profesores</h2>
-                        <p>En construcción por Arturo (Inserte meme de Sonic esperndo) </p>
+                        <h2>Modulo de Profesores</h2>
+                        <p>En construccion por Arturo</p>
                     </div>
                 </h:panelGroup>
 
                 <!-- VISTA UNIDAD (placeholder) -->
                 <h:panelGroup rendered="#{dashboardBean.vistaUnidad}" layout="block">
                     <div class="placeholder-view">
-                        <h2> Modulo de Materias</h2>
-                        <p>En construccion por Red </p>
+                        <h2>Modulo de Materias</h2>
+                        <p>En construccion por Red</p>
                     </div>
                 </h:panelGroup>
 
@@ -251,6 +264,42 @@
             inicializarGrid();
             inicializarTipos();
         });
+
+        /**
+         * Se ejecuta después del AJAX del select de unidad.
+         * Lee los valores de los spans y actualiza los contadores.
+         */
+        function actualizarHorasRequeridas() {
+            console.log('>>> actualizarHorasRequeridas LLAMADO');
+
+            var spanClase = document.getElementById('dataHorasClase');
+            var spanTaller = document.getElementById('dataHorasTaller');
+            var spanLab = document.getElementById('dataHorasLab');
+
+            console.log('Spans:', {
+                clase: spanClase ? spanClase.textContent : 'NO ENCONTRADO',
+                taller: spanTaller ? spanTaller.textContent : 'NO ENCONTRADO',
+                lab: spanLab ? spanLab.textContent : 'NO ENCONTRADO'
+            });
+
+            if (spanClase && spanTaller && spanLab) {
+                window.horasRequeridas.CLASE = parseInt(spanClase.textContent.trim()) || 0;
+                window.horasRequeridas.TALLER = parseInt(spanTaller.textContent.trim()) || 0;
+                window.horasRequeridas.LABORATORIO = parseInt(spanLab.textContent.trim()) || 0;
+
+                var elClase = document.getElementById('contador-clase');
+                var elTaller = document.getElementById('contador-taller');
+                var elLab = document.getElementById('contador-lab');
+
+                if (elClase) elClase.textContent = '0/' + window.horasRequeridas.CLASE;
+                if (elTaller) elTaller.textContent = '0/' + window.horasRequeridas.TALLER;
+                if (elLab) elLab.textContent = '0/' + window.horasRequeridas.LABORATORIO;
+
+                console.log('Contadores actualizados:', window.horasRequeridas);
+            } else {
+                console.warn('⚠️ No se encontraron los spans de horas');
+            }
+        }
         //]]>
     </script>
 </h:body>

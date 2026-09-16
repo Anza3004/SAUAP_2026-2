@@ -137,14 +137,14 @@ function actualizarContadores() {
         if (conteo[tipo] !== undefined) conteo[tipo]++;
     });
 
-    document.getElementById('contador-clase').textContent =
-        conteo.CLASE + '/' + window.horasRequeridas.CLASE;
-    document.getElementById('contador-taller').textContent =
-        conteo.TALLER + '/' + window.horasRequeridas.TALLER;
-    document.getElementById('contador-lab').textContent =
-        conteo.LABORATORIO + '/' + window.horasRequeridas.LABORATORIO;
+    var elClase = document.getElementById('contador-clase');
+    var elTaller = document.getElementById('contador-taller');
+    var elLab = document.getElementById('contador-lab');
 
-    // Colores condicionales
+    if (elClase) elClase.textContent = conteo.CLASE + '/' + window.horasRequeridas.CLASE;
+    if (elTaller) elTaller.textContent = conteo.TALLER + '/' + window.horasRequeridas.TALLER;
+    if (elLab) elLab.textContent = conteo.LABORATORIO + '/' + window.horasRequeridas.LABORATORIO;
+
     marcarContador('contador-clase', conteo.CLASE, window.horasRequeridas.CLASE);
     marcarContador('contador-taller', conteo.TALLER, window.horasRequeridas.TALLER);
     marcarContador('contador-lab', conteo.LABORATORIO, window.horasRequeridas.LABORATORIO);
@@ -197,9 +197,12 @@ function limpiarGrid() {
  * Serializa el grid a un input hidden antes de enviar al servidor.
  */
 function serializarGrid() {
-    const input = document.getElementById('asignacionForm:gridData');
+    var input = document.querySelector('[id$="gridData"]');
     if (input) {
         input.value = JSON.stringify(window.celdasPintadas);
+        console.log('Grid serializado:', input.value);
+    } else {
+        console.warn('⚠️ No se encontró el input gridData');
     }
 }
 
@@ -210,7 +213,7 @@ function marcarCeldasOcupadas(celdas) {
     if (!celdas) return;
 
     celdas.forEach(function(key) {
-        const td = document.querySelector('.grid-celda[data-key="' + key + '"]');
+        var td = document.querySelector('.grid-celda[data-key="' + key + '"]');
         if (td) {
             td.classList.add('celda-ocupada');
             td.title = 'Ya ocupada';
