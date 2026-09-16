@@ -1,7 +1,6 @@
 package mx.desarrollo.ui;
 
 import jakarta.enterprise.context.SessionScoped;
-import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import mx.desarrollo.entity.Usuario;
 
@@ -17,11 +16,14 @@ public class SessionBean implements Serializable {
         return usuarioLogueado != null;
     }
 
+    /**
+     * Cierra la sesión del usuario.
+     * IMPORTANTE: NO invalidamos la sesión HTTP para evitar ViewExpiredException.
+     * Solo limpiamos el usuario logueado.
+     * El redirect con faces-redirect=true limpia el ViewState.
+     */
     public void cerrarSesion() {
-        usuarioLogueado = null;
-        FacesContext.getCurrentInstance()
-                .getExternalContext()
-                .invalidateSession();
+        this.usuarioLogueado = null;
     }
 
     public Usuario getUsuarioLogueado() {

@@ -19,22 +19,27 @@ public class TraslapeValidator {
     }
 
     /**
-     * Valida si hay traslape para un profesor en un día y rango horario.
-     * @param idProfesor ID del profesor
-     * @param diaSemana Día de la semana (LUNES, MARTES, ...)
-     * @param horaInicio Hora de inicio
-     * @param horaFin Hora de fin
-     * @return true si HAY traslape, false si NO hay
+     * Valida si hay traslape (sin exclusión, para altas).
      */
     public boolean hayTraslape(Integer idProfesor, String diaSemana,
                                LocalTime horaInicio, LocalTime horaFin) {
+        return hayTraslape(idProfesor, diaSemana, horaInicio, horaFin, null);
+    }
+
+    /**
+     * Valida si hay traslape para un profesor en un día y rango horario.
+     * @param idExcluir si no es null, excluye esa asignación (para modificar)
+     */
+    public boolean hayTraslape(Integer idProfesor, String diaSemana,
+                               LocalTime horaInicio, LocalTime horaFin,
+                               Integer idExcluir) {
         if (idProfesor == null || diaSemana == null
                 || horaInicio == null || horaFin == null) {
             return false;
         }
 
         List<Asignacion> traslapes = delegateAsignacion
-                .buscarTraslapes(idProfesor, diaSemana, horaInicio, horaFin);
+                .buscarTraslapes(idProfesor, diaSemana, horaInicio, horaFin, idExcluir);
 
         return !traslapes.isEmpty();
     }
