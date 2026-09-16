@@ -16,7 +16,6 @@
     <div class="app">
         <div class="overlay" id="overlay"></div>
 
-        <!-- ============ SIDEBAR ============ -->
         <aside class="sidebar" id="sidebar">
             <div class="brand-mini">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -70,7 +69,6 @@
             </div>
         </aside>
 
-        <!-- ============ CONTENIDO ============ -->
         <div class="content">
             <div class="topbar">
                 <div class="user-menu">
@@ -84,28 +82,28 @@
             </div>
 
             <main>
-                <!-- VISTA INICIO -->
                 <h:panelGroup rendered="#{dashboardBean.vistaInicio}" layout="block">
                     <div class="hero-card">
                         <h:graphicImage library="images" name="SAUAPLOGO.jpeg" styleClass="mark" />
                     </div>
                 </h:panelGroup>
 
-                <!-- VISTA ASIGNACIÓN -->
                 <h:panelGroup rendered="#{dashboardBean.vistaAsignacion}" layout="block">
                     <div class="asignacion-container">
                         <h2 class="asignacion-title">Asignar Materia a Profesor</h2>
 
                         <h:form id="asignacionForm">
-                            <!-- Panel con las horas requeridas (SPAN) -->
                             <h:panelGroup id="horasRequeridas" layout="block">
                                 <span id="dataHorasClase" style="display:none;">#{asignacionBean.horasClaseSeleccionada}</span>
                                 <span id="dataHorasTaller" style="display:none;">#{asignacionBean.horasTallerSeleccionada}</span>
                                 <span id="dataHorasLab" style="display:none;">#{asignacionBean.horasLabSeleccionada}</span>
                             </h:panelGroup>
 
+                            <!-- 🆕 Hidden con el mensaje y tipo -->
+                            <h:inputHidden id="mensajeAlerta" value="#{asignacionBean.mensajeAlerta}" />
+                            <h:inputHidden id="tipoAlerta" value="#{asignacionBean.tipoAlerta}" />
+
                             <div class="asignacion-grid-layout">
-                                <!-- Columna izquierda: controles -->
                                 <div class="asignacion-controles">
                                     <div class="form-group">
                                         <label class="form-label">Profesor</label>
@@ -133,7 +131,6 @@
                                                     listener="#{asignacionBean.onUnidadChange()}"
                                                     render="horasRequeridas"
                                                     onevent="function(data) {
-                                                        console.log('AJAX status:', data.status);
                                                         if (data.status === 'success') {
                                                             setTimeout(actualizarHorasRequeridas, 300);
                                                         }
@@ -166,7 +163,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Columna derecha: grid -->
                                 <div class="asignacion-grid">
                                     <h3 class="grid-title">Horario del profesor</h3>
                                     <div class="grid-wrapper">
@@ -182,17 +178,14 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <!-- Se genera por JavaScript -->
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Input oculto para enviar el JSON -->
                             <h:inputHidden id="gridData" value="#{asignacionBean.gridData}" />
 
-                            <!-- Botones -->
                             <div class="asignacion-botones">
                                 <button type="button" class="btn btn-danger" onclick="limpiarGrid()">
                                     Cancelar
@@ -200,18 +193,13 @@
                                 <h:commandButton value="Confirmar"
                                                  action="#{asignacionBean.guardarDesdeGrid()}"
                                                  styleClass="btn btn-primary"
-                                                 onclick="serializarGrid();" />
-                            </div>
-
-                            <!-- Mensajes -->
-                            <div class="asignacion-mensajes">
-                                <h:messages showDetail="true" />
+                                                 onclick="if (!validarContadores()) return false; serializarGrid();"
+                                                 ajax="false" />
                             </div>
                         </h:form>
                     </div>
                 </h:panelGroup>
 
-                <!-- VISTA PROFESOR (placeholder) -->
                 <h:panelGroup rendered="#{dashboardBean.vistaProfesor}" layout="block">
                     <div class="placeholder-view">
                         <h2>Modulo de Profesores</h2>
@@ -219,7 +207,6 @@
                     </div>
                 </h:panelGroup>
 
-                <!-- VISTA UNIDAD (placeholder) -->
                 <h:panelGroup rendered="#{dashboardBean.vistaUnidad}" layout="block">
                     <div class="placeholder-view">
                         <h2>Modulo de Materias</h2>
@@ -227,7 +214,6 @@
                     </div>
                 </h:panelGroup>
 
-                <!-- VISTA CONSULTAS (placeholder) -->
                 <h:panelGroup rendered="#{dashboardBean.vistaConsultas}" layout="block">
                     <div class="placeholder-view">
                         <h2>Consultas</h2>
@@ -240,47 +226,47 @@
 
     <script type="text/javascript">
         //<![CDATA[
-        // Datos de la unidad actual (se actualizan dinámicamente)
-        window.horasRequeridas = {
-            CLASE: 0,
-            TALLER: 0,
-            LABORATORIO: 0
-        };
-
-        // Estado de las celdas: { "LUNES-08": "CLASE", "LUNES-09": "CLASE" }
+        window.horasRequeridas = { CLASE: 0, TALLER: 0, LABORATORIO: 0 };
         window.celdasPintadas = {};
-
-        // Tipo actualmente seleccionado
         window.tipoActual = 'CLASE';
-
-        // Días y horas
         window.dias = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES'];
         window.horas = ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
             '13:00', '14:00', '15:00', '16:00', '17:00', '18:00',
             '19:00', '20:00'];
 
-        // Inicialización
         document.addEventListener('DOMContentLoaded', function() {
             inicializarGrid();
             inicializarTipos();
+            mostrarAlertaSiExiste();
         });
 
-        /**
-         * Se ejecuta después del AJAX del select de unidad.
-         * Lee los valores de los spans y actualiza los contadores.
-         */
-        function actualizarHorasRequeridas() {
-            console.log('>>> actualizarHorasRequeridas LLAMADO');
+        // 🆕 Mostrar alerta después del POST
+        function mostrarAlertaSiExiste() {
+            var inputMensaje = document.querySelector('[id$="mensajeAlerta"]');
+            var inputTipo = document.querySelector('[id$="tipoAlerta"]');
 
+            if (inputMensaje && inputMensaje.value && inputMensaje.value.trim() !== '') {
+                var mensaje = inputMensaje.value;
+                var tipo = inputTipo ? inputTipo.value : 'info';
+
+                if (tipo === 'success') {
+                    alert('✅ ' + mensaje);
+                } else if (tipo === 'error') {
+                    alert('⚠️ ' + mensaje);
+                } else {
+                    alert(mensaje);
+                }
+
+                // Limpiar los hidden
+                inputMensaje.value = '';
+                if (inputTipo) inputTipo.value = '';
+            }
+        }
+
+        function actualizarHorasRequeridas() {
             var spanClase = document.getElementById('dataHorasClase');
             var spanTaller = document.getElementById('dataHorasTaller');
             var spanLab = document.getElementById('dataHorasLab');
-
-            console.log('Spans:', {
-                clase: spanClase ? spanClase.textContent : 'NO ENCONTRADO',
-                taller: spanTaller ? spanTaller.textContent : 'NO ENCONTRADO',
-                lab: spanLab ? spanLab.textContent : 'NO ENCONTRADO'
-            });
 
             if (spanClase && spanTaller && spanLab) {
                 window.horasRequeridas.CLASE = parseInt(spanClase.textContent.trim()) || 0;
@@ -294,10 +280,6 @@
                 if (elClase) elClase.textContent = '0/' + window.horasRequeridas.CLASE;
                 if (elTaller) elTaller.textContent = '0/' + window.horasRequeridas.TALLER;
                 if (elLab) elLab.textContent = '0/' + window.horasRequeridas.LABORATORIO;
-
-                console.log('Contadores actualizados:', window.horasRequeridas);
-            } else {
-                console.warn('⚠️ No se encontraron los spans de horas');
             }
         }
         //]]>

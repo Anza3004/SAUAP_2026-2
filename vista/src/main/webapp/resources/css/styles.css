@@ -429,20 +429,20 @@ table.grid-horario th {
 }
 
 table.grid-horario th.grid-header-hora {
-    width: 70px;
+    width: 110px;
     background: var(--verde-900);
 }
 
 table.grid-horario td.grid-hora {
     background: var(--lino);
-    padding: 8px;
-    font-size: 0.8rem;
+    padding: 8px 4px;
+    font-size: 0.72rem;
     font-weight: 600;
     text-align: center;
     color: var(--tinta-suave);
     border: 1px solid var(--borde);
+    white-space: nowrap;
 }
-
 table.grid-horario td.grid-celda {
     padding: 8px;
     text-align: center;

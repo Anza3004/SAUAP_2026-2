@@ -6,7 +6,6 @@ import mx.desarrollo.negocio.delegate.DelegateAsignacion;
 import mx.desarrollo.negocio.integration.TraslapeValidator;
 import mx.desarrollo.negocio.integration.ValidacionException;
 
-import java.time.Duration;
 import java.util.List;
 
 public class FacadeAsignacion {
@@ -32,6 +31,14 @@ public class FacadeAsignacion {
         return delegate.modificarAsignacion(asignacion);
     }
 
+    /**
+     * Valida una asignación SIN guardarla.
+     * Útil para validar todo un bloque antes de guardar.
+     */
+    public void validarAsignacionSinGuardar(Asignacion asignacion) {
+        validarAsignacion(asignacion, null);
+    }
+
     public void eliminarAsignacion(Asignacion asignacion) {
         if (asignacion == null || asignacion.getId() == null) {
             throw new ValidacionException("Debe seleccionar una asignación válida.");
@@ -53,16 +60,6 @@ public class FacadeAsignacion {
 
     public List<Asignacion> consultarPorUnidad(Integer idUnidad) {
         return delegate.consultarPorUnidad(idUnidad);
-    }
-
-    public String obtenerResumenHoras(Integer idUnidad) {
-        UnidadAprendizaje unidad = delegate.buscarUnidad(idUnidad);
-        if (unidad == null) {
-            throw new ValidacionException("No existe la unidad con ID: " + idUnidad);
-        }
-        int horasReq = calcularHorasRequeridas(unidad);
-        Long minutosAsignados = delegate.sumarMinutosAsignados(idUnidad);
-        return formatearMinutos(minutosAsignados.intValue()) + " / " + horasReq + "h";
     }
 
     public Long minutosAsignados(Integer idUnidad) {
@@ -112,53 +109,6 @@ public class FacadeAsignacion {
                             + " entre las " + asignacion.getHoraInicio()
                             + " y las " + asignacion.getHoraFin() + ".");
         }
-
-        validarHorasUnidad(asignacion, idExcluir);
-    }
-
-    private void validarHorasUnidad(Asignacion asignacion, Integer idExcluir) {
-        UnidadAprendizaje unidad = delegate.buscarUnidad(asignacion.getUnidad().getId());
-        if (unidad == null) {
-            throw new ValidacionException("No existe la unidad seleccionada.");
-        }
-
-        long minutosNueva = Duration.between(
-                asignacion.getHoraInicio(),
-                asignacion.getHoraFin()
-        ).toMinutes();
-
-        int minutosReq = calcularHorasRequeridas(unidad) * 60;
-        if (minutosReq == 0) {
-            throw new ValidacionException(
-                    "La unidad '" + unidad.getNombre() + "' no tiene horas configuradas.");
-        }
-
-        Long minutosYaAsignados;
-        if (idExcluir != null) {
-            minutosYaAsignados = delegate.sumarMinutosAsignadosExcluyendo(unidad.getId(), idExcluir);
-        } else {
-            minutosYaAsignados = delegate.sumarMinutosAsignados(unidad.getId());
-        }
-
-        long totalPropuesto = minutosYaAsignados + minutosNueva;
-
-        if (totalPropuesto > minutosReq) {
-            long exceso = totalPropuesto - minutosReq;
-            throw new ValidacionException(
-                    "No se puede asignar: excede el total de horas. " +
-                            "Unidad: " + unidad.getNombre() + ". " +
-                            "Requeridas: " + (minutosReq / 60) + "h. " +
-                            "Ya asignadas: " + formatearMinutos(minutosYaAsignados.intValue()) + ". " +
-                            "Nueva: " + formatearMinutos((int) minutosNueva) + ". " +
-                            "Exceso: " + formatearMinutos((int) exceso) + ".");
-        }
-
-        if (totalPropuesto < minutosReq) {
-            long faltante = minutosReq - totalPropuesto;
-            System.out.println("ℹ️ Unidad '" + unidad.getNombre() + "': " +
-                    formatearMinutos((int) totalPropuesto) + " de " + (minutosReq / 60) + "h. " +
-                    "Faltan " + formatearMinutos((int) faltante) + ".");
-        }
     }
 
     private int calcularHorasRequeridas(UnidadAprendizaje unidad) {
@@ -166,12 +116,5 @@ public class FacadeAsignacion {
         int taller = unidad.getHorasTaller() != null ? unidad.getHorasTaller() : 0;
         int lab = unidad.getHorasLaboratorio() != null ? unidad.getHorasLaboratorio() : 0;
         return clase + taller + lab;
-    }
-
-    private String formatearMinutos(int minutos) {
-        int h = minutos / 60;
-        int m = minutos % 60;
-        if (m == 0) return h + "h";
-        return h + "h " + m + "min";
     }
 }

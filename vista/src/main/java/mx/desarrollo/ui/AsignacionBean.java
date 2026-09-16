@@ -2,7 +2,6 @@ package mx.desarrollo.ui;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
-import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import mx.desarrollo.entity.Asignacion;
@@ -14,6 +13,7 @@ import mx.desarrollo.negocio.facade.FacadeUnidad;
 import mx.desarrollo.negocio.integration.ValidacionException;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,29 +26,29 @@ public class AsignacionBean implements Serializable {
     private final FacadeProfesor facadeProfesor = new FacadeProfesor();
     private final FacadeUnidad facadeUnidad = new FacadeUnidad();
 
-    // Estado de la vista
     private Asignacion asignacionActual;
     private List<Asignacion> asignaciones;
     private List<Profesor> profesores;
     private List<UnidadAprendizaje> unidades;
 
-    // Selecciones
     private Integer idProfesorSeleccionado;
     private Integer idUnidadSeleccionada;
 
-    // Grid data (JSON serializado del JS)
     private String gridData;
-    // Horas requeridas de la unidad seleccionada (para JS)
+
+    // 🆕 Mensajes para mostrar como alert en el cliente
+    private String mensajeAlerta;
+    private String tipoAlerta; // "success" | "error"
+
     private Integer horasClaseSeleccionada = 0;
     private Integer horasTallerSeleccionada = 0;
     private Integer horasLabSeleccionada = 0;
+
     @PostConstruct
     public void init() {
         asignacionActual = new Asignacion();
         cargarDatos();
     }
-
-    // ============ MÉTODOS DE NEGOCIO ============
 
     public void cargarDatos() {
         try {
@@ -56,16 +56,11 @@ public class AsignacionBean implements Serializable {
             profesores = facadeProfesor.consultarProfesores();
             unidades = facadeUnidad.consultarUnidades();
         } catch (Exception e) {
-            addError("Error al cargar datos: " + e.getMessage());
+            System.err.println("Error al cargar datos: " + e.getMessage());
         }
     }
-    /**
-     * Se ejecuta cuando cambia la unidad seleccionada.
-     * Actualiza las horas requeridas para que JS las lea.
-     */
-    public void onUnidadChange() {
-        System.out.println(">>> onUnidadChange llamado. ID: " + idUnidadSeleccionada);
 
+    public void onUnidadChange() {
         if (idUnidadSeleccionada == null) {
             horasClaseSeleccionada = 0;
             horasTallerSeleccionada = 0;
@@ -78,31 +73,30 @@ public class AsignacionBean implements Serializable {
             horasClaseSeleccionada = u.getHorasClase() != null ? u.getHorasClase().intValue() : 0;
             horasTallerSeleccionada = u.getHorasTaller() != null ? u.getHorasTaller().intValue() : 0;
             horasLabSeleccionada = u.getHorasLaboratorio() != null ? u.getHorasLaboratorio().intValue() : 0;
-
-            System.out.println(">>> Horas: Clase=" + horasClaseSeleccionada +
-                    ", Taller=" + horasTallerSeleccionada +
-                    ", Lab=" + horasLabSeleccionada);
         }
     }
 
     /**
-     * Guarda las asignaciones desde el grid interactivo.
-     * Recibe el JSON con las celdas pintadas, lo convierte en asignaciones,
-     * las agrupa en bloques contiguos, y las guarda.
+     * Guarda las asignaciones del grid.
+     * Los mensajes se envían al cliente vía mensajeAlerta + tipoAlerta.
      */
     public void guardarDesdeGrid() {
+        // Resetear mensajes
+        mensajeAlerta = null;
+        tipoAlerta = null;
+
         try {
-            // 1. Validar selecciones
+            // 1. Validaciones básicas
             if (idProfesorSeleccionado == null) {
-                addError("Debe seleccionar un profesor.");
+                setAlerta("Debe seleccionar un profesor.", "error");
                 return;
             }
             if (idUnidadSeleccionada == null) {
-                addError("Debe seleccionar una unidad de aprendizaje.");
+                setAlerta("Debe seleccionar una unidad de aprendizaje.", "error");
                 return;
             }
             if (gridData == null || gridData.isBlank() || gridData.equals("{}")) {
-                addError("Debe pintar al menos una celda en el horario.");
+                setAlerta("Debe pintar al menos una celda en el horario.", "error");
                 return;
             }
 
@@ -110,72 +104,132 @@ public class AsignacionBean implements Serializable {
             UnidadAprendizaje u = encontrarUnidad(idUnidadSeleccionada);
 
             if (p == null || u == null) {
-                addError("Profesor o unidad no válidos.");
+                setAlerta("Profesor o unidad no válidos.", "error");
                 return;
             }
 
-            // 2. Parsear el JSON y construir asignaciones
+            // 2. Parsear
             List<Asignacion> asignacionesNuevas = parsearGridData(gridData, p, u);
 
             if (asignacionesNuevas.isEmpty()) {
-                addError("No se pudieron generar asignaciones del grid.");
+                setAlerta("No se pudieron generar asignaciones del grid.", "error");
                 return;
             }
 
-            // 3. Guardar cada asignación (el Facade valida traslapes y horas)
-            int guardadas = 0;
+            // 3. Validar horas del bloque completo
+            int minutosRequeridos = calcularMinutosRequeridos(u);
+            long minutosPintados = calcularMinutosDelBloque(asignacionesNuevas);
+
+            if (minutosPintados != minutosRequeridos) {
+                String mensaje = minutosPintados < minutosRequeridos
+                        ? "Faltan horas por asignar.\n\nUnidad: " + u.getNombre() +
+                        "\nRequeridas: " + (minutosRequeridos / 60) + "h" +
+                        "\nPintadas: " + formatearMinutos((int) minutosPintados) +
+                        "\nFaltan: " + formatearMinutos((int) (minutosRequeridos - minutosPintados))
+                        : "Se excede el total de horas.\n\nUnidad: " + u.getNombre() +
+                        "\nRequeridas: " + (minutosRequeridos / 60) + "h" +
+                        "\nPintadas: " + formatearMinutos((int) minutosPintados) +
+                        "\nExceso: " + formatearMinutos((int) (minutosPintados - minutosRequeridos));
+                setAlerta(mensaje, "error");
+                return;
+            }
+
+            // 4. Validar TODAS las asignaciones ANTES de guardar
+            List<String> erroresValidacion = new ArrayList<>();
             for (Asignacion a : asignacionesNuevas) {
                 try {
-                    facade.altaAsignacion(a);
-                    guardadas++;
+                    facade.validarAsignacionSinGuardar(a);
                 } catch (ValidacionException e) {
-                    // Si una falla, mostrar el error específico
-                    addError("Error al guardar " + a.getDiaSemana() + " " +
-                            a.getHoraInicio() + "-" + a.getHoraFin() + ": " +
-                            e.getMessage());
-                    // No lanzar, seguir con las demás (opcional)
+                    erroresValidacion.add(a.getDiaSemana() + " " +
+                            a.getHoraInicio() + "-" + a.getHoraFin() + ": " + e.getMessage());
                 }
             }
 
-            if (guardadas > 0) {
-                addInfo("✅ " + guardadas + " asignación(es) guardada(s) correctamente.");
-                cargarDatos();
-                gridData = null;
-                idProfesorSeleccionado = null;
-                idUnidadSeleccionada = null;
+            // 5. Si hay errores → NO guardar ninguna
+            if (!erroresValidacion.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("No se guardó ninguna asignación.\n");
+                sb.append("Se encontraron ").append(erroresValidacion.size()).append(" errores:\n\n");
+                for (String err : erroresValidacion) {
+                    sb.append("• ").append(err).append("\n");
+                }
+                setAlerta(sb.toString(), "error");
+                return;
             }
 
+            // 6. TODO OK → Guardar todas
+            int guardadas = 0;
+            for (Asignacion a : asignacionesNuevas) {
+                facade.altaAsignacion(a);
+                guardadas++;
+            }
+
+            // 7. Mostrar éxito
+            setAlerta("✅ " + guardadas + " asignación(es) guardada(s) correctamente.", "success");
+
+            cargarDatos();
+            gridData = null;
+            idProfesorSeleccionado = null;
+            idUnidadSeleccionada = null;
+            horasClaseSeleccionada = 0;
+            horasTallerSeleccionada = 0;
+            horasLabSeleccionada = 0;
+
         } catch (Exception e) {
-            addError("Error inesperado: " + e.getMessage());
+            setAlerta("Error inesperado: " + e.getMessage(), "error");
             e.printStackTrace();
         }
     }
 
-    /**
-     * Parsea el JSON del grid y construye una lista de Asignaciones.
-     * JSON esperado: { "LUNES-08:00": "CLASE", "LUNES-09:00": "CLASE", ... }
-     *
-     * Agrupa celdas contiguas del mismo tipo en una sola Asignación.
-     */
+    private void setAlerta(String mensaje, String tipo) {
+        this.mensajeAlerta = mensaje;
+        this.tipoAlerta = tipo;
+        System.out.println(">>> Alerta [" + tipo + "]: " + mensaje);
+    }
+
+    private int calcularMinutosRequeridos(UnidadAprendizaje u) {
+        int clase = u.getHorasClase() != null ? u.getHorasClase() : 0;
+        int taller = u.getHorasTaller() != null ? u.getHorasTaller() : 0;
+        int lab = u.getHorasLaboratorio() != null ? u.getHorasLaboratorio() : 0;
+        return (clase + taller + lab) * 60;
+    }
+
+    private long calcularMinutosDelBloque(List<Asignacion> asignaciones) {
+        long total = 0;
+        for (Asignacion a : asignaciones) {
+            total += Duration.between(a.getHoraInicio(), a.getHoraFin()).toMinutes();
+        }
+        return total;
+    }
+
+    private String formatearMinutos(int minutos) {
+        int h = minutos / 60;
+        int m = minutos % 60;
+        if (m == 0) return h + "h";
+        return h + "h " + m + "min";
+    }
+
     private List<Asignacion> parsearGridData(String json, Profesor p, UnidadAprendizaje u) {
         List<Asignacion> resultado = new ArrayList<>();
 
-        // 1. Parsear JSON manualmente (sin librerías externas)
-        // Eliminar { } y separar por comas
+        json = json.replace("&quot;", "\"")
+                .replace("&amp;", "&")
+                .replace("&lt;", "<")
+                .replace("&gt;", ">")
+                .replace("&#39;", "'");
+
         json = json.trim();
         if (json.startsWith("{")) json = json.substring(1);
         if (json.endsWith("}")) json = json.substring(0, json.length() - 1);
 
         if (json.isBlank()) return resultado;
 
-        // Cada entrada es: "LUNES-08:00":"CLASE"
         String[] entradas = json.split(",");
         java.util.Map<String, String> mapa = new java.util.HashMap<>();
 
         for (String entrada : entradas) {
             entrada = entrada.trim();
-            // Separar por ":"
-            int idx = entrada.indexOf(":");
+            int idx = entrada.lastIndexOf(":");
             if (idx < 0) continue;
 
             String key = entrada.substring(0, idx).trim().replace("\"", "");
@@ -183,13 +237,11 @@ public class AsignacionBean implements Serializable {
             mapa.put(key, tipo);
         }
 
-        // 2. Agrupar por día
-        // Estructura: { "LUNES": { "CLASE": [07:00, 08:00, 09:00], ... } }
         java.util.Map<String, java.util.Map<String, List<String>>> porDia = new java.util.LinkedHashMap<>();
 
         for (java.util.Map.Entry<String, String> entry : mapa.entrySet()) {
-            String key = entry.getKey(); // "LUNES-08:00"
-            String tipo = entry.getValue(); // "CLASE"
+            String key = entry.getKey();
+            String tipo = entry.getValue();
 
             int guion = key.indexOf("-");
             if (guion < 0) continue;
@@ -202,7 +254,6 @@ public class AsignacionBean implements Serializable {
                     .add(hora);
         }
 
-        // 3. Para cada día y tipo, agrupar horas contiguas
         for (java.util.Map.Entry<String, java.util.Map<String, List<String>>> diaEntry : porDia.entrySet()) {
             String dia = diaEntry.getKey();
 
@@ -210,26 +261,23 @@ public class AsignacionBean implements Serializable {
                 List<String> horas = tipoEntry.getValue();
                 java.util.Collections.sort(horas);
 
-                // Agrupar horas contiguas
                 int i = 0;
                 while (i < horas.size()) {
                     String horaInicio = horas.get(i);
                     String horaFin = sumarUnaHora(horaInicio);
 
-                    // Ver cuántas horas contiguas hay
                     int j = i + 1;
                     while (j < horas.size() && horas.get(j).equals(horaFin)) {
                         horaFin = sumarUnaHora(horaFin);
                         j++;
                     }
 
-                    // Crear Asignación
                     Asignacion a = new Asignacion();
                     a.setProfesor(p);
                     a.setUnidad(u);
                     a.setDiaSemana(dia);
-                    a.setHoraInicio(LocalTime.parse(horaInicio));
-                    a.setHoraFin(LocalTime.parse(horaFin));
+                    a.setHoraInicio(parseHoraSegura(horaInicio));
+                    a.setHoraFin(parseHoraSegura(horaFin));
 
                     resultado.add(a);
                     i = j;
@@ -240,20 +288,26 @@ public class AsignacionBean implements Serializable {
         return resultado;
     }
 
-    /**
-     * Suma una hora a una hora en formato HH:mm.
-     * "08:00" → "09:00"
-     */
     private String sumarUnaHora(String hora) {
+        if (hora == null || hora.isBlank()) return hora;
+        String horaNormalizada = hora.contains(":") ? hora : hora + ":00";
         try {
-            LocalTime t = LocalTime.parse(hora);
+            LocalTime t = LocalTime.parse(horaNormalizada);
             return t.plusHours(1).toString();
         } catch (Exception e) {
             return hora;
         }
     }
 
-    // ============ MÉTODOS AUXILIARES ============
+    private LocalTime parseHoraSegura(String hora) {
+        if (hora == null || hora.isBlank()) return null;
+        String horaNormalizada = hora.contains(":") ? hora : hora + ":00";
+        try {
+            return LocalTime.parse(horaNormalizada);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     private Profesor encontrarProfesor(Integer id) {
         if (id == null || profesores == null) return null;
@@ -269,16 +323,6 @@ public class AsignacionBean implements Serializable {
             if (u.getId() != null && u.getId().equals(id)) return u;
         }
         return null;
-    }
-
-    private void addInfo(String mensaje) {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, mensaje, null));
-    }
-
-    private void addError(String mensaje) {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, mensaje, null));
     }
 
     // ============ GETTERS Y SETTERS ============
@@ -303,24 +347,19 @@ public class AsignacionBean implements Serializable {
 
     public String getGridData() { return gridData; }
     public void setGridData(String gridData) { this.gridData = gridData; }
-    public Integer getHorasClaseSeleccionada() {
-        return horasClaseSeleccionada;
-    }
-    public void setHorasClaseSeleccionada(Integer horasClaseSeleccionada) {
-        this.horasClaseSeleccionada = horasClaseSeleccionada;
-    }
 
-    public Integer getHorasTallerSeleccionada() {
-        return horasTallerSeleccionada;
-    }
-    public void setHorasTallerSeleccionada(Integer horasTallerSeleccionada) {
-        this.horasTallerSeleccionada = horasTallerSeleccionada;
-    }
+    public String getMensajeAlerta() { return mensajeAlerta; }
+    public void setMensajeAlerta(String mensajeAlerta) { this.mensajeAlerta = mensajeAlerta; }
 
-    public Integer getHorasLabSeleccionada() {
-        return horasLabSeleccionada;
-    }
-    public void setHorasLabSeleccionada(Integer horasLabSeleccionada) {
-        this.horasLabSeleccionada = horasLabSeleccionada;
-    }
+    public String getTipoAlerta() { return tipoAlerta; }
+    public void setTipoAlerta(String tipoAlerta) { this.tipoAlerta = tipoAlerta; }
+
+    public Integer getHorasClaseSeleccionada() { return horasClaseSeleccionada; }
+    public void setHorasClaseSeleccionada(Integer horasClaseSeleccionada) { this.horasClaseSeleccionada = horasClaseSeleccionada; }
+
+    public Integer getHorasTallerSeleccionada() { return horasTallerSeleccionada; }
+    public void setHorasTallerSeleccionada(Integer horasTallerSeleccionada) { this.horasTallerSeleccionada = horasTallerSeleccionada; }
+
+    public Integer getHorasLabSeleccionada() { return horasLabSeleccionada; }
+    public void setHorasLabSeleccionada(Integer horasLabSeleccionada) { this.horasLabSeleccionada = horasLabSeleccionada; }
 }

@@ -6,6 +6,7 @@ import mx.desarrollo.entity.Asignacion;
 import mx.desarrollo.persistencia.persistence.AbstractDAO;
 import mx.desarrollo.persistencia.persistence.HibernateUtil;
 
+import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -17,11 +18,10 @@ public class AsignacionDAO extends AbstractDAO<Asignacion> {
 
     /**
      * Busca traslapes de un profesor en un día específico.
-     * Devuelve asignaciones que se solapan con el rango [horaInicio, horaFin].
+     * Si idExcluir no es null, excluye esa asignación (para modificar).
      */
     public List<Asignacion> buscarTraslapes(Integer idProfesor, String diaSemana,
                                             LocalTime horaInicio, LocalTime horaFin) {
-        // Llamada sin exclusión (alta nueva)
         return buscarTraslapes(idProfesor, diaSemana, horaInicio, horaFin, null);
     }
 
@@ -56,9 +56,6 @@ public class AsignacionDAO extends AbstractDAO<Asignacion> {
         }
     }
 
-    /**
-     * Lista asignaciones de un profesor.
-     */
     public List<Asignacion> listarPorProfesor(Integer idProfesor) {
         EntityManager em = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
@@ -71,9 +68,6 @@ public class AsignacionDAO extends AbstractDAO<Asignacion> {
         }
     }
 
-    /**
-     * Lista asignaciones de una unidad de aprendizaje.
-     */
     public List<Asignacion> listarPorUnidad(Integer idUnidad) {
         EntityManager em = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
@@ -85,38 +79,37 @@ public class AsignacionDAO extends AbstractDAO<Asignacion> {
             em.close();
         }
     }
+
     /**
      * Suma el total de minutos de todas las asignaciones de una unidad.
+     * ⚠️ Ya NO se usa para validar, solo para mostrar info.
      */
     public Long sumarMinutosAsignados(Integer idUnidad) {
         EntityManager em = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
-            TypedQuery<Long> q = em.createQuery(
+            TypedQuery<BigDecimal> q = em.createQuery(
                     "SELECT COALESCE(SUM(FUNCTION('TIMESTAMPDIFF', MINUTE, a.horaInicio, a.horaFin)), 0) " +
-                            "FROM Asignacion a WHERE a.unidad.id = :idUnidad", Long.class);
+                            "FROM Asignacion a WHERE a.unidad.id = :idUnidad", BigDecimal.class);
             q.setParameter("idUnidad", idUnidad);
-            Long total = q.getSingleResult();
-            return total != null ? total : 0L;
+            BigDecimal total = q.getSingleResult();
+            return total != null ? total.longValue() : 0L;
         } finally {
             em.close();
         }
     }
 
-    /**
-     * Suma los minutos asignados a una unidad, EXCLUYENDO una asignación (para modificar).
-     */
     public Long sumarMinutosAsignadosExcluyendo(Integer idUnidad, Integer idAsignacionExcluir) {
         EntityManager em = HibernateUtil.getEntityManagerFactory().createEntityManager();
         try {
-            TypedQuery<Long> q = em.createQuery(
+            TypedQuery<BigDecimal> q = em.createQuery(
                     "SELECT COALESCE(SUM(FUNCTION('TIMESTAMPDIFF', MINUTE, a.horaInicio, a.horaFin)), 0) " +
                             "FROM Asignacion a " +
                             "WHERE a.unidad.id = :idUnidad " +
-                            "AND a.id <> :idExcluir", Long.class);
+                            "AND a.id <> :idExcluir", BigDecimal.class);
             q.setParameter("idUnidad", idUnidad);
             q.setParameter("idExcluir", idAsignacionExcluir);
-            Long total = q.getSingleResult();
-            return total != null ? total : 0L;
+            BigDecimal total = q.getSingleResult();
+            return total != null ? total.longValue() : 0L;
         } finally {
             em.close();
         }
