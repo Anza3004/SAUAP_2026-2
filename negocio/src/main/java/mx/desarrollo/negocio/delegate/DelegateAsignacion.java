@@ -36,11 +36,30 @@ public class DelegateAsignacion {
                 .buscarTraslapes(idProfesor, dia, horaInicio, horaFin);
     }
 
+    public List<Asignacion> buscarTraslapes(Integer idProfesor, String dia,
+                                            LocalTime horaInicio, LocalTime horaFin,
+                                            Integer idExcluir) {
+        return locator.getAsignacionDAO()
+                .buscarTraslapes(idProfesor, dia, horaInicio, horaFin, idExcluir);
+    }
+
+    public mx.desarrollo.entity.UnidadAprendizaje buscarUnidad(Integer idUnidad) {
+        return locator.getUnidadDAO().buscarPorId(idUnidad);
+    }
+
     public List<Asignacion> consultarPorProfesor(Integer idProfesor) {
         return locator.getAsignacionDAO().listarPorProfesor(idProfesor);
     }
 
     public List<Asignacion> consultarPorUnidad(Integer idUnidad) {
         return locator.getAsignacionDAO().listarPorUnidad(idUnidad);
+    }
+    public Long sumarMinutosAsignados(Integer idUnidad) {
+        return locator.getAsignacionDAO().sumarMinutosAsignados(idUnidad);
+    }
+
+    public Long sumarMinutosAsignadosExcluyendo(Integer idUnidad, Integer idAsignacionExcluir) {
+        return locator.getAsignacionDAO()
+                .sumarMinutosAsignadosExcluyendo(idUnidad, idAsignacionExcluir);
     }
 }

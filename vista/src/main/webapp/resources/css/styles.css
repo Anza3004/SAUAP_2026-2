@@ -265,3 +265,343 @@ main{
     .hero-card{ padding:40px 28px; }
     .wordmark{ font-size:2.1rem; }
 }
+/* ============ ASIGNACIÓN ============ */
+
+.asignacion-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.asignacion-title {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 1.5rem;
+    color: var(--verde-900);
+    text-align: center;
+    margin: 0 0 24px;
+    padding: 16px;
+    background: var(--blanco);
+    border-radius: var(--radio-md);
+    border: 2px solid var(--borde);
+}
+
+.asignacion-grid-layout {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.asignacion-controles {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--tinta);
+    margin-bottom: 8px;
+}
+
+.form-select {
+    width: 100%;
+    height: 44px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--borde);
+    border-radius: var(--radio-md);
+    font-size: 0.95rem;
+    background: var(--lino);
+    font-family: inherit;
+    color: var(--tinta);
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: var(--verde-600);
+    box-shadow: 0 0 0 3px rgba(28, 122, 79, 0.12);
+}
+
+/* Tipos de hora */
+.tipos-hora {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.tipo-hora {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 2px solid var(--borde);
+    border-radius: var(--radio-md);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--blanco);
+}
+
+.tipo-hora:hover {
+    border-color: var(--verde-600);
+}
+
+.tipo-hora.active {
+    border-color: var(--verde-700);
+    background: var(--verde-tint);
+    box-shadow: 0 0 0 3px rgba(28, 122, 79, 0.15);
+}
+
+.tipo-color {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.tipo-clase .tipo-color { background: var(--azul); }
+.tipo-taller .tipo-color { background: var(--naranja); }
+.tipo-lab .tipo-color { background: var(--verde-600); }
+
+.tipo-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.tipo-nombre {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--tinta);
+}
+
+.tipo-contador {
+    font-size: 0.85rem;
+    color: var(--tinta-suave);
+    font-weight: 500;
+}
+
+.tipo-contador.ok { color: var(--verde-600); font-weight: 700; }
+.tipo-contador.excedido { color: #dc2626; font-weight: 700; }
+.tipo-contador.incompleto { color: var(--naranja); font-weight: 600; }
+
+/* Grid */
+.asignacion-grid {
+    background: var(--blanco);
+    border-radius: var(--radio-md);
+    padding: 20px;
+    border: 1px solid var(--borde);
+}
+
+.grid-title {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 1.1rem;
+    color: var(--verde-900);
+    text-align: center;
+    margin: 0 0 16px;
+}
+
+.grid-wrapper {
+    overflow-x: auto;
+}
+
+table.grid-horario {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+table.grid-horario th {
+    background: var(--verde-700);
+    color: var(--blanco);
+    padding: 10px 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    border: 1px solid var(--verde-600);
+}
+
+table.grid-horario th.grid-header-hora {
+    width: 110px;
+    background: var(--verde-900);
+}
+
+table.grid-horario td.grid-hora {
+    background: var(--lino);
+    padding: 8px 4px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--tinta-suave);
+    border: 1px solid var(--borde);
+    white-space: nowrap;
+}
+table.grid-horario td.grid-celda {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid var(--borde);
+    cursor: pointer;
+    transition: all 0.1s;
+    height: 36px;
+    user-select: none;
+    font-size: 1rem;
+    color: transparent;
+}
+
+table.grid-horario td.grid-celda:hover {
+    background: var(--verde-tint);
+}
+
+table.grid-horario td.celda-clase {
+    background: var(--azul);
+    color: white;
+}
+
+table.grid-horario td.celda-taller {
+    background: var(--naranja);
+    color: white;
+}
+
+table.grid-horario td.celda-lab {
+    background: var(--verde-600);
+    color: white;
+}
+
+table.grid-horario td.celda-ocupada {
+    background: #9ca3af !important;
+    cursor: not-allowed;
+    color: white;
+}
+
+/* Botones de asignación */
+.asignacion-botones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.btn {
+    padding: 12px 28px;
+    border: none;
+    border-radius: var(--radio-md);
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.btn-primary {
+    background: var(--verde-600);
+    color: var(--blanco);
+}
+
+.btn-primary:hover {
+    background: var(--verde-700);
+}
+
+.btn-danger {
+    background: #dc2626;
+    color: var(--blanco);
+}
+
+.btn-danger:hover {
+    background: #b91c1c;
+}
+
+/* Mensajes */
+.asignacion-mensajes {
+    margin-top: 20px;
+}
+
+.asignacion-mensajes .ui-messages-info,
+.asignacion-mensajes .ui-message-info {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+    padding: 12px 16px;
+    border-radius: var(--radio-md);
+    margin-bottom: 8px;
+}
+
+.asignacion-mensajes .ui-messages-error,
+.asignacion-mensajes .ui-message-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    padding: 12px 16px;
+    border-radius: var(--radio-md);
+    margin-bottom: 8px;
+}
+
+/* Placeholder */
+.placeholder-view {
+    width: 100%;
+    max-width: 800px;
+    padding: 60px 40px;
+    text-align: center;
+    background: var(--blanco);
+    border-radius: var(--radio-lg);
+    border: 1px solid var(--borde);
+}
+
+.placeholder-view h2 {
+    font-family: "Space Grotesk", sans-serif;
+    color: var(--verde-900);
+    font-size: 1.5rem;
+    margin: 0 0 12px;
+}
+
+.placeholder-view p {
+    color: var(--tinta-suave);
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Nav form */
+.nav-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.nav-item {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    background: none;
+    border: none;
+    color: #cfe4d8;
+    padding: 11px 12px;
+    border-radius: var(--radio-md);
+    font-size: .95rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+}
+
+.nav-item span {
+    display: inline-block;
+}
+
+.nav-item:hover {
+    background: rgba(255,255,255,.08);
+    color: #fff;
+}
+
+.nav-item.active {
+    background: #fff;
+    color: var(--verde-900);
+    box-shadow: var(--sombra);
+}

@@ -7,16 +7,16 @@
 <h:head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SAUAP · Sistema de Asignación de Unidades de Aprendizaje</title>
+    <title>SAUAP · Sistema de Asignación de Unidades</title>
     <h:outputStylesheet library="css" name="styles.css" />
+    <h:outputScript library="js" name="dashboard.js" />
 </h:head>
 
 <h:body>
     <div class="app">
-
         <div class="overlay" id="overlay"></div>
 
-        <aside class="sidebar" id="sidebar" aria-label="Navegación principal">
+        <aside class="sidebar" id="sidebar">
             <div class="brand-mini">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="12" cy="12" r="10" stroke="#e8871e" stroke-width="1.6" />
@@ -25,102 +25,264 @@
                 <span>SAUAP</span>
             </div>
 
-            <nav class="primary-nav">
-                <button class="nav-item active" data-nav="inicio">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5" /><path d="M5.5 10v9a1 1 0 0 0 1 1H9a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h2.5a1 1 0 0 0 1-1v-9" /></svg>
-                    Inicio
-                </button>
+            <h:form id="navForm" styleClass="nav-form">
+                <nav class="primary-nav">
+                    <h:commandLink action="#{dashboardBean.mostrarInicio()}"
+                                   styleClass="nav-item #{dashboardBean.vistaInicio ? 'active' : ''}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1H9a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h2.5a1 1 0 0 0 1-1v-9"/></svg>
+                        <span>Inicio</span>
+                    </h:commandLink>
 
-                <button class="nav-item" data-nav="profesores">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2" /><path d="M3.5 19c.6-3.2 2.9-5 5.5-5s4.9 1.8 5.5 5" /><path d="M15.5 8.3a3 3 0 1 1 3.2 5" /><path d="M15 14.3c2.2.2 4 1.9 4.5 4.7" /></svg>
-                    Profesores
-                </button>
+                    <h:commandLink action="#{dashboardBean.mostrarProfesor()}"
+                                   styleClass="nav-item #{dashboardBean.vistaProfesor ? 'active' : ''}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.2 2.9-5 5.5-5s4.9 1.8 5.5 5"/><path d="M15.5 8.3a3 3 0 1 1 3.2 5"/><path d="M15 14.3c2.2.2 4 1.9 4.5 4.7"/></svg>
+                        <span>Profesores</span>
+                    </h:commandLink>
 
-                <button class="nav-item" data-nav="materias">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H17a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6.5A1.5 1.5 0 0 1 5 19.5v-15Z" /><path d="M5 17.2c.5-.3 1-.5 1.6-.5H18" /><path d="M9 7.5h5M9 10.5h5" /></svg>
-                    Materias
-                </button>
+                    <h:commandLink action="#{dashboardBean.mostrarUnidad()}"
+                                   styleClass="nav-item #{dashboardBean.vistaUnidad ? 'active' : ''}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H17a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6.5A1.5 1.5 0 0 1 5 19.5v-15Z"/><path d="M5 17.2c.5-.3 1-.5 1.6-.5H18"/><path d="M9 7.5h5M9 10.5h5"/></svg>
+                        <span>Materias</span>
+                    </h:commandLink>
 
-                <button class="nav-item" data-nav="asignaciones">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="1.6" /><path d="M9 3.5h6a1 1 0 0 1 1 1V6H8V4.5a1 1 0 0 1 1-1Z" /><path d="m9 13 2 2 4-4.3" /></svg>
-                    Asignaciones
-                </button>
+                    <h:commandLink action="#{dashboardBean.mostrarAsignacion()}"
+                                   styleClass="nav-item #{dashboardBean.vistaAsignacion ? 'active' : ''}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="1.6"/><path d="M9 3.5h6a1 1 0 0 1 1 1V6H8V4.5a1 1 0 0 1 1-1Z"/><path d="m9 13 2 2 4-4.3"/></svg>
+                        <span>Asignaciones</span>
+                    </h:commandLink>
 
-                <button class="nav-item expandable" id="consultasToggle" aria-expanded="false" aria-controls="consultasSub">
-                        <span class="row">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.2" /><path d="m20 20-4.6-4.6" /></svg>
-                            Consultas
-                        </span>
-                    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
-                </button>
-                <div class="submenu" id="consultasSub">
-                    <div>
-                        <a href="#">Asignación por profesor</a>
-                        <a href="#">Búsqueda por unidad</a>
-                    </div>
-                </div>
-            </nav>
+                    <h:commandLink action="#{dashboardBean.mostrarConsultas()}"
+                                   styleClass="nav-item #{dashboardBean.vistaConsultas ? 'active' : ''}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.2"/><path d="m20 20-4.6-4.6"/></svg>
+                        <span>Consultas</span>
+                    </h:commandLink>
+                </nav>
+            </h:form>
 
             <div class="sidebar-foot">
                 <h:form>
-                    <button class="nav-item" type="submit" onclick="return false;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4h3a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3" /><path d="M10 8l-4 4 4 4" /><path d="M6 12h12" /></svg>
-                        Cerrar sesión
-                    </button>
+                    <h:commandLink action="#{dashboardBean.cerrarSesion()}" styleClass="nav-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4h3a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3"/><path d="M10 8l-4 4 4 4"/><path d="M6 12h12"/></svg>
+                        <span>Cerrar sesión</span>
+                    </h:commandLink>
                 </h:form>
             </div>
         </aside>
 
         <div class="content">
             <div class="topbar">
-                <button class="menu-toggle" id="menuToggle" aria-label="Abrir navegación">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
-                </button>
-
                 <div class="user-menu">
                     <button class="user-chip" id="userToggle" aria-expanded="false">
-                            <span class="avatar">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2" /><path d="M5 20c.8-3.8 3.4-6 7-6s6.2 2.2 7 6" /></svg>
-                            </span>
+                        <span class="avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.8-3.8 3.4-6 7-6s6.2 2.2 7 6"/></svg>
+                        </span>
                         #{sessionBean.usuarioLogueado.correo}
-                        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
                     </button>
                 </div>
             </div>
 
             <main>
-                <div class="hero-card">
-                    <h:graphicImage library="images" name="SAUAPLOGO.jpeg" alt="Logo SAUAP UABC" styleClass="mark" />
-                </div>
+                <h:panelGroup rendered="#{dashboardBean.vistaInicio}" layout="block">
+                    <div class="hero-card">
+                        <h:graphicImage library="images" name="SAUAPLOGO.jpeg" styleClass="mark" />
+                    </div>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{dashboardBean.vistaAsignacion}" layout="block">
+                    <div class="asignacion-container">
+                        <h2 class="asignacion-title">Asignar Materia a Profesor</h2>
+
+                        <h:form id="asignacionForm">
+                            <h:panelGroup id="horasRequeridas" layout="block">
+                                <span id="dataHorasClase" style="display:none;">#{asignacionBean.horasClaseSeleccionada}</span>
+                                <span id="dataHorasTaller" style="display:none;">#{asignacionBean.horasTallerSeleccionada}</span>
+                                <span id="dataHorasLab" style="display:none;">#{asignacionBean.horasLabSeleccionada}</span>
+                            </h:panelGroup>
+
+                            <!-- 🆕 Hidden con el mensaje y tipo -->
+                            <h:inputHidden id="mensajeAlerta" value="#{asignacionBean.mensajeAlerta}" />
+                            <h:inputHidden id="tipoAlerta" value="#{asignacionBean.tipoAlerta}" />
+
+                            <div class="asignacion-grid-layout">
+                                <div class="asignacion-controles">
+                                    <div class="form-group">
+                                        <label class="form-label">Profesor</label>
+                                        <h:selectOneMenu value="#{asignacionBean.idProfesorSeleccionado}"
+                                                         styleClass="form-select">
+                                            <f:selectItem itemValue="#{null}" itemLabel="-- Seleccionar --" />
+                                            <f:selectItems value="#{asignacionBean.profesores}"
+                                                           var="p"
+                                                           itemValue="#{p.id}"
+                                                           itemLabel="#{p.nombre} #{p.apellidoPaterno}" />
+                                        </h:selectOneMenu>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Unidad de aprendizaje</label>
+                                        <h:selectOneMenu value="#{asignacionBean.idUnidadSeleccionada}"
+                                                         styleClass="form-select">
+                                            <f:selectItem itemValue="#{null}" itemLabel="-- Seleccionar --" />
+                                            <f:selectItems value="#{asignacionBean.unidades}"
+                                                           var="u"
+                                                           itemValue="#{u.id}"
+                                                           itemLabel="#{u.nombre}" />
+                                            <f:ajax event="change"
+                                                    execute="@this"
+                                                    listener="#{asignacionBean.onUnidadChange()}"
+                                                    render="horasRequeridas"
+                                                    onevent="function(data) {
+                                                        if (data.status === 'success') {
+                                                            setTimeout(actualizarHorasRequeridas, 300);
+                                                        }
+                                                    }" />
+                                        </h:selectOneMenu>
+                                    </div>
+
+                                    <div class="tipos-hora">
+                                        <div class="tipo-hora tipo-clase" data-tipo="CLASE">
+                                            <div class="tipo-color"></div>
+                                            <div class="tipo-info">
+                                                <span class="tipo-nombre">Clase</span>
+                                                <span class="tipo-contador" id="contador-clase">0/0</span>
+                                            </div>
+                                        </div>
+                                        <div class="tipo-hora tipo-taller" data-tipo="TALLER">
+                                            <div class="tipo-color"></div>
+                                            <div class="tipo-info">
+                                                <span class="tipo-nombre">Taller</span>
+                                                <span class="tipo-contador" id="contador-taller">0/0</span>
+                                            </div>
+                                        </div>
+                                        <div class="tipo-hora tipo-lab" data-tipo="LABORATORIO">
+                                            <div class="tipo-color"></div>
+                                            <div class="tipo-info">
+                                                <span class="tipo-nombre">Laboratorio</span>
+                                                <span class="tipo-contador" id="contador-lab">0/0</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="asignacion-grid">
+                                    <h3 class="grid-title">Horario del profesor</h3>
+                                    <div class="grid-wrapper">
+                                        <table class="grid-horario" id="gridHorario">
+                                            <thead>
+                                            <tr>
+                                                <th class="grid-header-hora"></th>
+                                                <th>Lunes</th>
+                                                <th>Martes</th>
+                                                <th>Miércoles</th>
+                                                <th>Jueves</th>
+                                                <th>Viernes</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h:inputHidden id="gridData" value="#{asignacionBean.gridData}" />
+
+                            <div class="asignacion-botones">
+                                <button type="button" class="btn btn-danger" onclick="limpiarGrid()">
+                                    Cancelar
+                                </button>
+                                <h:commandButton value="Confirmar"
+                                                 action="#{asignacionBean.guardarDesdeGrid()}"
+                                                 styleClass="btn btn-primary"
+                                                 onclick="if (!validarContadores()) return false; serializarGrid();"
+                                                 ajax="false" />
+                            </div>
+                        </h:form>
+                    </div>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{dashboardBean.vistaProfesor}" layout="block">
+                    <div class="placeholder-view">
+                        <h2>Modulo de Profesores</h2>
+                        <p>En construccion por Arturo</p>
+                    </div>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{dashboardBean.vistaUnidad}" layout="block">
+                    <div class="placeholder-view">
+                        <h2>Modulo de Materias</h2>
+                        <p>En construccion por Red</p>
+                    </div>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{dashboardBean.vistaConsultas}" layout="block">
+                    <div class="placeholder-view">
+                        <h2>Consultas</h2>
+                        <p>En construccion por Karen y Ricardo</p>
+                    </div>
+                </h:panelGroup>
             </main>
         </div>
     </div>
 
     <script type="text/javascript">
         //<![CDATA[
-        // Submenu de Consultas
-        var consultasToggle = document.getElementById('consultasToggle');
-        var consultasSub = document.getElementById('consultasSub');
-        consultasToggle.addEventListener('click', function() {
-            var open = consultasSub.classList.toggle('open');
-            consultasToggle.setAttribute('aria-expanded', open);
+        window.horasRequeridas = { CLASE: 0, TALLER: 0, LABORATORIO: 0 };
+        window.celdasPintadas = {};
+        window.tipoActual = 'CLASE';
+        window.dias = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES'];
+        window.horas = ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00',
+            '13:00', '14:00', '15:00', '16:00', '17:00', '18:00',
+            '19:00', '20:00'];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarGrid();
+            inicializarTipos();
+            mostrarAlertaSiExiste();
         });
 
-        // Sidebar mobile
-        var sidebar = document.getElementById('sidebar');
-        var overlay = document.getElementById('overlay');
-        var menuToggle = document.getElementById('menuToggle');
-        function closeSidebarOnMobile(){
-            sidebar.classList.remove('open');
-            overlay.classList.remove('open');
+        // 🆕 Mostrar alerta después del POST
+        function mostrarAlertaSiExiste() {
+            var inputMensaje = document.querySelector('[id$="mensajeAlerta"]');
+            var inputTipo = document.querySelector('[id$="tipoAlerta"]');
+
+            if (inputMensaje && inputMensaje.value && inputMensaje.value.trim() !== '') {
+                var mensaje = inputMensaje.value;
+                var tipo = inputTipo ? inputTipo.value : 'info';
+
+                if (tipo === 'success') {
+                    alert('✅ ' + mensaje);
+                } else if (tipo === 'error') {
+                    alert('⚠️ ' + mensaje);
+                } else {
+                    alert(mensaje);
+                }
+
+                // Limpiar los hidden
+                inputMensaje.value = '';
+                if (inputTipo) inputTipo.value = '';
+            }
         }
-        menuToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('open');
-        });
-        overlay.addEventListener('click', closeSidebarOnMobile);
+
+        function actualizarHorasRequeridas() {
+            var spanClase = document.getElementById('dataHorasClase');
+            var spanTaller = document.getElementById('dataHorasTaller');
+            var spanLab = document.getElementById('dataHorasLab');
+
+            if (spanClase && spanTaller && spanLab) {
+                window.horasRequeridas.CLASE = parseInt(spanClase.textContent.trim()) || 0;
+                window.horasRequeridas.TALLER = parseInt(spanTaller.textContent.trim()) || 0;
+                window.horasRequeridas.LABORATORIO = parseInt(spanLab.textContent.trim()) || 0;
+
+                var elClase = document.getElementById('contador-clase');
+                var elTaller = document.getElementById('contador-taller');
+                var elLab = document.getElementById('contador-lab');
+
+                if (elClase) elClase.textContent = '0/' + window.horasRequeridas.CLASE;
+                if (elTaller) elTaller.textContent = '0/' + window.horasRequeridas.TALLER;
+                if (elLab) elLab.textContent = '0/' + window.horasRequeridas.LABORATORIO;
+            }
+        }
         //]]>
     </script>
-
 </h:body>
 </html>

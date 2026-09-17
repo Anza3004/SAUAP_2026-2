@@ -1,6 +1,7 @@
 package mx.desarrollo.negocio.facade;
 
 import mx.desarrollo.entity.Asignacion;
+import mx.desarrollo.entity.UnidadAprendizaje;
 import mx.desarrollo.negocio.delegate.DelegateAsignacion;
 import mx.desarrollo.negocio.integration.TraslapeValidator;
 import mx.desarrollo.negocio.integration.ValidacionException;
@@ -17,14 +18,8 @@ public class FacadeAsignacion {
         this.traslapeValidator = new TraslapeValidator();
     }
 
-    /**
-     * Da de alta una asignación validando:
-     * - Campos obligatorios
-     * - Rango horario válido (inicio < fin)
-     * - Sin traslapes con otras asignaciones del mismo profesor
-     */
     public Asignacion altaAsignacion(Asignacion asignacion) {
-        validarAsignacion(asignacion);
+        validarAsignacion(asignacion, null);
         return delegate.altaAsignacion(asignacion);
     }
 
@@ -32,8 +27,16 @@ public class FacadeAsignacion {
         if (asignacion.getId() == null) {
             throw new ValidacionException("La asignación debe tener ID para modificar.");
         }
-        validarAsignacion(asignacion);
+        validarAsignacion(asignacion, asignacion.getId());
         return delegate.modificarAsignacion(asignacion);
+    }
+
+    /**
+     * Valida una asignación SIN guardarla.
+     * Útil para validar todo un bloque antes de guardar.
+     */
+    public void validarAsignacionSinGuardar(Asignacion asignacion) {
+        validarAsignacion(asignacion, null);
     }
 
     public void eliminarAsignacion(Asignacion asignacion) {
@@ -59,10 +62,17 @@ public class FacadeAsignacion {
         return delegate.consultarPorUnidad(idUnidad);
     }
 
-    /**
-     * Valida todos los aspectos de una asignación.
-     */
-    private void validarAsignacion(Asignacion asignacion) {
+    public Long minutosAsignados(Integer idUnidad) {
+        return delegate.sumarMinutosAsignados(idUnidad);
+    }
+
+    public int minutosRequeridos(Integer idUnidad) {
+        UnidadAprendizaje unidad = delegate.buscarUnidad(idUnidad);
+        if (unidad == null) return 0;
+        return calcularHorasRequeridas(unidad) * 60;
+    }
+
+    private void validarAsignacion(Asignacion asignacion, Integer idExcluir) {
         if (asignacion == null) {
             throw new ValidacionException("La asignación no puede ser nula.");
         }
@@ -85,12 +95,12 @@ public class FacadeAsignacion {
             throw new ValidacionException(errorRango);
         }
 
-        // Validar traslape
         boolean hayTraslape = traslapeValidator.hayTraslape(
                 asignacion.getProfesor().getId(),
                 asignacion.getDiaSemana(),
                 asignacion.getHoraInicio(),
-                asignacion.getHoraFin());
+                asignacion.getHoraFin(),
+                idExcluir);
 
         if (hayTraslape) {
             throw new ValidacionException(
@@ -99,5 +109,12 @@ public class FacadeAsignacion {
                             + " entre las " + asignacion.getHoraInicio()
                             + " y las " + asignacion.getHoraFin() + ".");
         }
+    }
+
+    private int calcularHorasRequeridas(UnidadAprendizaje unidad) {
+        int clase = unidad.getHorasClase() != null ? unidad.getHorasClase() : 0;
+        int taller = unidad.getHorasTaller() != null ? unidad.getHorasTaller() : 0;
+        int lab = unidad.getHorasLaboratorio() != null ? unidad.getHorasLaboratorio() : 0;
+        return clase + taller + lab;
     }
 }
