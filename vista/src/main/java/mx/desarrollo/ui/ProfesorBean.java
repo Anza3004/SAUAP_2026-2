@@ -18,6 +18,8 @@ public class ProfesorBean implements Serializable {
 
     private Profesor nuevoProfesor = new Profesor();
     private List<Profesor> profesores;
+    private String mensajeAlerta;
+    private String tipoAlerta;
 
     @PostConstruct
     public void init() {
@@ -29,9 +31,11 @@ public class ProfesorBean implements Serializable {
             facade.altaProfesor(nuevoProfesor);
             nuevoProfesor = new Profesor(); // limpia el formulario
             cargarProfesores();
+            mensajeAlerta = "Profesor creado exitosamente";
+            tipoAlerta = "sucess";
         } catch (ValidacionException e) {
-            // aquí podrías guardar e.getMessage() en un campo mensajeAlerta,
-            // igual que hace AsignacionBean
+            mensajeAlerta = e.getMessage();
+            tipoAlerta = "error";
         }
     }
 
@@ -41,4 +45,8 @@ public class ProfesorBean implements Serializable {
 
     public Profesor getNuevoProfesor() { return nuevoProfesor; }
     public List<Profesor> getProfesores() { return profesores; }
+    public String getMensajeAlerta() { return mensajeAlerta; }
+    public void setMensajeAlerta(String mensajeAlerta) {this.mensajeAlerta = mensajeAlerta;}
+    public String getTipoAlerta() { return tipoAlerta; }
+    public void setTipoAlerta(String tipoAlerta) { this.tipoAlerta = tipoAlerta; }
 }

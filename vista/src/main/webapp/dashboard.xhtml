@@ -205,29 +205,35 @@
                         <h2 class="asignacion-title">Alta de Profesor</h2>
 
                         <h:form id="profesorForm">
+                            <h:inputHidden id="mensajeAlerta" value="#{profesorBean.mensajeAlerta}" />
+                            <h:inputHidden id="tipoAlerta" value="#{profesorBean.tipoAlerta}" />
+
                             <div class="form-group">
-                                <h:message for="nombre" styleClass="form-error" />
                                 <label class="form-label">Nombre</label>
                                 <h:inputText id="nombre" styleClass="form-select"
                                              value="#{profesorBean.nuevoProfesor.nombre}" required="true" />
+                                <h:message for="nombre" styleClass="form-error" />
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Apellido paterno</label>
-                                <h:inputText styleClass="form-select"
+                                <h:inputText id="apellidoPaterno" styleClass="form-select"
                                              value="#{profesorBean.nuevoProfesor.apellidoPaterno}" required="true" />
+                                <h:message for="apellidoPaterno" styleClass="form-error" />
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Apellido materno</label>
-                                <h:inputText styleClass="form-select"
+                                <h:inputText id="apellidoMaterno" styleClass="form-select"
                                              value="#{profesorBean.nuevoProfesor.apellidoMaterno}" required="true" />
+                                <h:message for="apellidoMaterno" styleClass="form-error" />
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">RFC</label>
-                                <h:inputText styleClass="form-select"
+                                <h:inputText id="rfc" styleClass="form-select"
                                              value="#{profesorBean.nuevoProfesor.rfc}" required="true" />
+                                <h:message for="rfc" styleClass="form-error" />
                             </div>
 
                             <div class="asignacion-botones">

@@ -329,6 +329,13 @@ main{
     box-shadow: 0 0 0 3px rgba(28, 122, 79, 0.12);
 }
 
+.form-error {
+    color: #dc2626;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    display: block;
+}
+
 /* Tipos de hora */
 .tipos-hora {
     display: flex;
