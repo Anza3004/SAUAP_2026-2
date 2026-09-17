@@ -201,9 +201,41 @@
                 </h:panelGroup>
 
                 <h:panelGroup rendered="#{dashboardBean.vistaProfesor}" layout="block">
-                    <div class="placeholder-view">
-                        <h2>Modulo de Profesores</h2>
-                        <p>En construccion por Arturo</p>
+                    <div class="asignacion-container">
+                        <h2 class="asignacion-title">Alta de Profesor</h2>
+
+                        <h:form id="profesorForm">
+                            <div class="form-group">
+                                <h:message for="nombre" styleClass="form-error" />
+                                <label class="form-label">Nombre</label>
+                                <h:inputText id="nombre" styleClass="form-select"
+                                             value="#{profesorBean.nuevoProfesor.nombre}" required="true" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Apellido paterno</label>
+                                <h:inputText styleClass="form-select"
+                                             value="#{profesorBean.nuevoProfesor.apellidoPaterno}" required="true" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Apellido materno</label>
+                                <h:inputText styleClass="form-select"
+                                             value="#{profesorBean.nuevoProfesor.apellidoMaterno}" required="true" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">RFC</label>
+                                <h:inputText styleClass="form-select"
+                                             value="#{profesorBean.nuevoProfesor.rfc}" required="true" />
+                            </div>
+
+                            <div class="asignacion-botones">
+                                <h:commandButton value="Guardar profesor"
+                                                 action="#{profesorBean.guardar()}"
+                                                 styleClass="btn btn-primary" />
+                            </div>
+                        </h:form>
                     </div>
                 </h:panelGroup>
 
