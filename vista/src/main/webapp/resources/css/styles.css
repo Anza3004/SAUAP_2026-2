@@ -99,12 +99,11 @@ nav.primary-nav{ display:flex; flex-direction:column; gap:2px; flex:1; }
 .nav-item[aria-expanded="true"] .chev{ transform:rotate(180deg); }
 
 .submenu{
-    display:grid;
-    grid-template-rows:0fr;
-    transition:grid-template-rows .22s ease;
+    display: none;
 }
-.submenu.open{ grid-template-rows:1fr; }
-.submenu > div{ overflow:hidden; }
+.submenu.open {
+    display: block;
+}
 .submenu a{
     display:block;
     color:#b9d4c5;
@@ -604,4 +603,239 @@ table.grid-horario td.celda-ocupada {
     background: #fff;
     color: var(--verde-900);
     box-shadow: var(--sombra);
+}
+
+/* ==================================================
+   MODULO DE CONSULTAS
+   ================================================== */
+
+.consulta-container {
+    width: 90%;
+    max-width: 1150px;
+    margin: 35px auto;
+    background: #ffffff;
+    border: 1px solid #d9dfdc;
+    border-radius: 10px;
+    padding: 28px 35px 35px 35px;
+}
+
+
+/* TITULO PRINCIPAL */
+
+.consulta-title {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 0 30px 0;
+    padding: 16px 20px;
+
+    text-align: center;
+    color: #13322B;
+
+    font-size: 24px;
+    font-weight: 700;
+
+    border: 1px solid #d4dbd7;
+    border-radius: 7px;
+}
+
+
+/* SUBTITULO */
+
+.consulta-container h3 {
+    margin: 0 0 22px 0;
+
+    color: #13322B;
+
+    font-size: 18px;
+    font-weight: 700;
+}
+
+
+/* AREA DE BUSQUEDA */
+
+.consulta-busqueda {
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 30px;
+}
+
+
+/* INPUT DE BUSQUEDA */
+
+.consulta-input {
+    width: 420px;
+    height: 42px;
+
+    box-sizing: border-box;
+
+    padding: 0 14px;
+
+    border: 1px solid #bfc9c4;
+    border-radius: 5px;
+
+    background: #ffffff;
+
+    color: #13322B;
+    font-size: 14px;
+
+    outline: none;
+}
+
+.consulta-input:focus {
+    border-color: #00A35C;
+}
+
+
+/* BOTON BUSCAR */
+
+.consulta-btn {
+    width: 140px;
+    height: 42px;
+
+    border: none;
+    border-radius: 5px;
+
+    background: #00A35C;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.consulta-btn:hover {
+    background: #00472B;
+}
+
+/* BOTON MOSTRAR TODOS / REFRESH */
+
+.consulta-btn-refresh {
+    width: 45px;
+    height: 42px;
+
+    border: none;
+    border-radius: 5px;
+
+    background: #175094;
+    color: #ffffff;
+
+    font-size: 22px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.consulta-btn-refresh:hover {
+    background: #13322B;
+}
+
+/* CONTENEDOR DE LA TABLA */
+
+.consulta-tabla-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+
+/* TABLA */
+
+.consulta-tabla {
+    width: 100%;
+
+    margin-top: 5px;
+
+    border-collapse: collapse;
+}
+
+.consulta-tabla th {
+    padding: 14px 10px;
+
+    background: #00A35C;
+    color: #ffffff;
+
+    border: 1px solid #d8dedb;
+
+    font-size: 14px;
+    text-align: center;
+}
+
+.consulta-tabla td {
+    padding: 16px 10px;
+
+    color: #13322B;
+
+    border: 1px solid #d8dedb;
+
+    font-size: 14px;
+    text-align: center;
+}
+
+.consulta-tabla tr:nth-child(even) {
+    background: #f5f8f6;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 700px) {
+
+    .consulta-container {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .consulta-busqueda {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .consulta-input {
+        width: 100%;
+    }
+
+    .consulta-btn {
+        width: 100%;
+    }
+}
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.45);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 9999;
+}
+
+.modal-profesor {
+    width: 90%;
+    max-width: 520px;
+    background: white;
+    border-radius: 10px;
+    padding: 30px 35px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+}
+
+.modal-profesor .consulta-input {
+    width: 100%;
+}
+
+.modal-profesor .form-group {
+    margin-bottom: 16px;
+}
+
+.modificar-botones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
 }

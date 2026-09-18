@@ -54,6 +54,12 @@ public class FacadeAsignacion {
         return delegate.consultarAsignaciones();
     }
 
+
+    public List<Asignacion> consultarAsignacionesConDetalles() {
+        return delegate.consultarAsignacionesConDetalles();
+    }
+
+
     public List<Asignacion> consultarPorProfesor(Integer idProfesor) {
         return delegate.consultarPorProfesor(idProfesor);
     }

@@ -4,6 +4,8 @@
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core">
 
+
+
 <h:head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -51,11 +53,38 @@
                         <span>Asignaciones</span>
                     </h:commandLink>
 
-                    <h:commandLink action="#{dashboardBean.mostrarConsultas()}"
-                                   styleClass="nav-item #{dashboardBean.vistaConsultas ? 'active' : ''}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.2"/><path d="m20 20-4.6-4.6"/></svg>
+                    <div class="nav-item expandable #{dashboardBean.vistaConsultas ? 'active' : ''}"
+                         onclick="document.getElementById('submenuConsultas').classList.toggle('open')">
+
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.8"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="10.5" cy="10.5" r="6.2"/>
+                            <path d="m20 20-4.6-4.6"/>
+                        </svg>
+
                         <span>Consultas</span>
-                    </h:commandLink>
+                        <span class="chev">⌄</span>
+
+                    </div>
+
+                    <div id="submenuConsultas"
+                         class="submenu #{dashboardBean.vistaConsultas ? 'open' : ''}">
+
+                        <h:commandLink
+                                value="Consulta Profesores"
+                                action="#{dashboardBean.mostrarConsultaProfesores()}"
+                                styleClass="#{dashboardBean.vistaConsultaProfesores ? 'active' : ''}"/>
+
+                        <h:commandLink
+                                value="Consulta Asignaciones"
+                                action="#{dashboardBean.mostrarConsultaAsignaciones()}"
+                                styleClass="#{dashboardBean.vistaConsultaAsignaciones ? 'active' : ''}"/>
+
+                    </div>
                 </nav>
             </h:form>
 
@@ -214,12 +243,388 @@
                     </div>
                 </h:panelGroup>
 
-                <h:panelGroup rendered="#{dashboardBean.vistaConsultas}" layout="block">
-                    <div class="placeholder-view">
-                        <h2>Consultas</h2>
-                        <p>En construccion por Karen y Ricardo</p>
+
+                <h:panelGroup rendered="#{dashboardBean.vistaConsultaProfesores}" layout="block">
+                    <div class="consulta-container">
+
+                        <h2 class="consulta-title">
+                            Consulta Profesores
+                        </h2>
+
+                        <h:form id="consultaProfesorForm">
+
+                            <h3>
+                                Lista de Profesores
+                            </h3>
+
+                            <div class="consulta-busqueda">
+
+                                <h:inputText
+                                        id="busquedaProfesor"
+                                        value="#{consultaProfesorUI.textoBusqueda}"
+                                        styleClass="consulta-input"
+                                        placeholder="Buscar por nombre o RFC"/>
+
+                                <h:commandButton
+                                        value="Buscar"
+                                        action="#{consultaProfesorUI.buscar}"
+                                        styleClass="consulta-btn"/>
+
+                                <h:commandButton
+                                        value="↻"
+                                        action="#{consultaProfesorUI.mostrarTodos}"
+                                        styleClass="consulta-btn-refresh"
+                                        title="Mostrar todos los profesores"/>
+
+                            </div>
+
+
+                            <div class="consulta-tabla-wrapper">
+
+                                <h:dataTable
+                                        value="#{consultaProfesorUI.profesores}"
+                                        var="profesor"
+                                        styleClass="consulta-tabla">
+
+                                    <h:column>
+                                        <f:facet name="header">Id</f:facet>
+                                        #{profesor.id}
+                                    </h:column>
+
+                                    <h:column>
+                                        <f:facet name="header">Nombre</f:facet>
+                                        #{profesor.nombre}
+                                    </h:column>
+
+                                    <h:column>
+                                        <f:facet name="header">Apellido Paterno</f:facet>
+                                        #{profesor.apellidoPaterno}
+                                    </h:column>
+
+                                    <h:column>
+                                        <f:facet name="header">Apellido Materno</f:facet>
+                                        #{profesor.apellidoMaterno}
+                                    </h:column>
+
+                                    <h:column>
+                                        <f:facet name="header">RFC</f:facet>
+                                        #{profesor.rfc}
+                                    </h:column>
+
+
+                                    <h:column>
+                                        <f:facet name="header">Acción</f:facet>
+
+                                        <div class="consulta-acciones">
+
+                                            <h:commandButton
+                                                    value="✎"
+                                                    action="#{consultaProfesorUI.abrirModificar(profesor)}"
+                                                    styleClass="btn-accion btn-editar"
+                                                    title="Modificar profesor"/>
+
+                                            <h:commandButton
+                                                    value="🗑"
+                                                    action="#{consultaProfesorUI.abrirEliminar(profesor)}"
+                                                    styleClass="btn-accion btn-eliminar"
+                                                    title="Eliminar profesor"/>
+
+
+                                        </div>
+
+                                    </h:column>
+
+                                </h:dataTable>
+
+                            </div>
+
+                        </h:form>
+
                     </div>
+
+
+                <h:panelGroup rendered="#{consultaProfesorUI.mostrarModificar}"
+                              layout="block">
+
+                    <div class="modal-overlay">
+                    <div class="modal-profesor">
+
+                        <h2 class="consulta-title">
+                            Modificar Profesor
+                        </h2>
+
+                        <h:form id="modificarProfesorForm">
+
+                            <div class="form-group">
+                                <label>Nombre</label>
+                                <h:inputText
+                                        value="#{consultaProfesorUI.profesorSeleccionado.nombre}"
+                                        styleClass="consulta-input"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Apellido Paterno</label>
+                                <h:inputText
+                                        value="#{consultaProfesorUI.profesorSeleccionado.apellidoPaterno}"
+                                        styleClass="consulta-input"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Apellido Materno</label>
+                                <h:inputText
+                                        value="#{consultaProfesorUI.profesorSeleccionado.apellidoMaterno}"
+                                        styleClass="consulta-input"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>RFC</label>
+                                <h:inputText
+                                        value="#{consultaProfesorUI.profesorSeleccionado.rfc}"
+                                        styleClass="consulta-input"/>
+                            </div>
+
+                            <div class="modificar-botones">
+
+                                <h:commandButton
+                                        value="Cancelar"
+                                        action="#{consultaProfesorUI.cancelarModificar}"
+                                        styleClass="btn btn-danger"/>
+
+                                <h:commandButton
+                                        value="Guardar Cambios"
+                                        action="#{consultaProfesorUI.guardarCambios}"
+                                        styleClass="btn btn-primary"/>
+
+                            </div>
+
+                        </h:form>
+
+                       </div>
+                    </div>
+
                 </h:panelGroup>
+
+
+                    <h:panelGroup rendered="#{consultaProfesorUI.mostrarEliminar}"
+                                  layout="block">
+
+                        <div class="modal-overlay">
+                            <div class="modal-profesor">
+
+                                <h2 class="consulta-title">
+                                    Eliminar Profesor
+                                </h2>
+
+                                <h:form id="eliminarProfesorForm">
+
+                                    <p>
+                                        ¿Estas seguro que deseas eliminar este profesor?
+                                    </p>
+
+                                    <p>
+                                        <strong>
+                                            #{consultaProfesorUI.profesorSeleccionado.nombre}
+                                            #{consultaProfesorUI.profesorSeleccionado.apellidoPaterno}
+                                            #{consultaProfesorUI.profesorSeleccionado.apellidoMaterno}
+                                        </strong>
+                                    </p>
+
+                                    <p>
+                                        RFC: #{consultaProfesorUI.profesorSeleccionado.rfc}
+                                    </p>
+
+                                    <div class="modificar-botones">
+
+                                        <h:commandButton
+                                                value="Cancelar"
+                                                action="#{consultaProfesorUI.cancelarEliminar}"
+                                                styleClass="btn btn-danger"/>
+
+                                        <h:commandButton
+                                                value="Eliminar"
+                                                action="#{consultaProfesorUI.eliminarProfesor}"
+                                                styleClass="btn btn-danger"/>
+
+                                    </div>
+
+                                </h:form>
+
+                            </div>
+                        </div>
+                    </h:panelGroup>
+
+                </h:panelGroup>
+
+
+                <h:panelGroup rendered="#{dashboardBean.vistaConsultaAsignaciones}"
+                              layout="block">
+
+
+                <!-- CONSULTA DE ASIGNACIONES -->
+
+                    <div class="consulta-container">
+
+                        <h2 class="consulta-title">
+                            Consulta Asignaciones
+                        </h2>
+
+                        <h:form id="consultaAsignacionForm">
+
+                            <h3>
+                                Lista de Profesores con Asignaciones
+                            </h3>
+
+                            <div class="consulta-busqueda">
+
+                                <h:inputText
+                                        id="busquedaAsignacion"
+                                        value="#{consultaAsignacionUI.textoBusqueda}"
+                                        styleClass="consulta-input"
+                                        placeholder="Buscar profesor por nombre o RFC"/>
+
+                                <h:commandButton
+                                        value="Buscar"
+                                        action="#{consultaAsignacionUI.buscar}"
+                                        styleClass="consulta-btn"/>
+
+                                <h:commandButton
+                                        value="↻"
+                                        action="#{consultaAsignacionUI.mostrarTodas}"
+                                        styleClass="consulta-btn-refresh"
+                                        title="Mostrar todas las asignaciones"/>
+
+                            </div>
+
+                            <div class="consulta-tabla-wrapper">
+
+                                <h:dataTable
+                                        value="#{consultaAsignacionUI.profesores}"
+                                        var="profesor"
+                                        styleClass="consulta-tabla">
+
+                                    <h:column>
+                                        <f:facet name="header">Profesor</f:facet>
+                                        #{profesor.nombre}
+                                        #{profesor.apellidoPaterno}
+                                        #{profesor.apellidoMaterno}
+                                    </h:column>
+
+                                    <h:column>
+                                        <f:facet name="header">RFC</f:facet>
+                                        #{profesor.rfc}
+                                    </h:column>
+
+                                    <h:column>
+                                        <f:facet name="header">Unidades Asignadas</f:facet>
+                                        #{consultaAsignacionUI.contarUnidadesAsignadas(profesor)}
+                                    </h:column>
+
+                                    <h:column>
+                                        <f:facet name="header">Acción</f:facet>
+
+                                    <div class="consulta-acciones">
+                                        <h:commandButton
+                                                value="Detalles"
+                                                action="#{consultaAsignacionUI.abrirDetalles(profesor)}"
+                                                styleClass="btn-accion btn-editar"
+                                                title="Ver detalles"/>
+                                    </div>
+
+                                    </h:column>
+
+                                </h:dataTable>
+
+                            </div>
+
+                        </h:form>
+
+                    </div>
+
+
+                    <h:panelGroup rendered="#{consultaAsignacionUI.mostrarDetalles}" layout="block">
+
+                        <div class="modal-overlay">
+
+                            <div class="modal-profesor">
+
+                                <h2 class="consulta-title">
+                                    Detalles Asignación
+                                </h2>
+
+                                <h:form id="detallesAsignacionForm">
+
+                                    <div class="form-group">
+                                        <strong>Profesor:</strong>
+                                        <span>
+                        #{consultaAsignacionUI.profesorSeleccionado.nombre}
+                        #{consultaAsignacionUI.profesorSeleccionado.apellidoPaterno}
+                        #{consultaAsignacionUI.profesorSeleccionado.apellidoMaterno}
+                    </span>
+                                    </div>
+
+                                    <h:dataTable
+                                            value="#{consultaAsignacionUI.asignacionesProfesor}"
+                                            var="asignacion"
+                                            styleClass="consulta-tabla">
+
+                                        <h:column>
+                                            <f:facet name="header">
+                                                Unidad de Aprendizaje
+                                            </f:facet>
+                                            #{asignacion.unidad.nombre}
+                                        </h:column>
+
+                                        <h:column>
+                                            <f:facet name="header">
+                                                Horario
+                                            </f:facet>
+
+                                            #{asignacion.diaSemana}
+                                            #{asignacion.horaInicio} - #{asignacion.horaFin}
+                                        </h:column>
+
+                                        <h:column>
+                                            <f:facet name="header">
+                                                Acciones
+                                            </f:facet>
+
+                                            <div class="consulta-acciones">
+                            <span class="btn-accion btn-eliminar"
+                                  title="Eliminar">
+                                🗑️
+                            </span>
+
+                                                <span class="btn-accion btn-editar"
+                                                      title="Modificar">
+                                ✏️
+                            </span>
+                                            </div>
+
+                                        </h:column>
+
+                                    </h:dataTable>
+
+                                    <div class="modificar-botones">
+
+                                        <h:commandButton
+                                                value="Cerrar"
+                                                action="#{consultaAsignacionUI.cerrarDetalles}"
+                                                styleClass="btn btn-danger"/>
+
+                                    </div>
+
+                                </h:form>
+
+                            </div>
+
+                        </div>
+
+                    </h:panelGroup>
+
+
+
+                </h:panelGroup>
+
             </main>
         </div>
     </div>

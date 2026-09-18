@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+<h:head>
+    <title>Consulta de Asignaciones</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #13322B;
+        }
+
+        .pagina {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           MENÚ LATERAL
+           ========================= */
+
+        .sidebar {
+            width: 230px;
+            background-color: #00472B;
+            color: white;
+            padding: 25px 15px;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 35px;
+            padding-left: 10px;
+        }
+
+        .menu-item {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 13px 15px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+
+        .menu-item:hover {
+            background-color: #00A35C;
+        }
+
+        .menu-item.activo {
+            background-color: #00A35C;
+        }
+
+        .cerrar-sesion {
+            margin-top: 250px;
+        }
+
+        /* =========================
+           CONTENIDO
+           ========================= */
+
+        .contenido {
+            flex: 1;
+            padding: 25px 40px;
+        }
+
+        .encabezado {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #175094;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        .encabezado h2 {
+            margin: 0;
+            color: #13322B;
+        }
+
+        .usuario {
+            font-size: 15px;
+        }
+
+        /* =========================
+           TARJETA PRINCIPAL
+           ========================= */
+
+        .tarjeta {
+            max-width: 1050px;
+            margin: auto;
+            border: 1px solid #d9dfdc;
+            border-radius: 8px;
+            padding: 25px;
+            background-color: white;
+        }
+
+        .titulo {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        /* =========================
+           BÚSQUEDA
+           ========================= */
+
+        .barra-busqueda {
+            display: flex;
+            align-items: end;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .grupo {
+            flex: 1;
+        }
+
+        .grupo label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .selector {
+            width: 100%;
+            height: 42px;
+            border: 1px solid #cccccc;
+            border-radius: 5px;
+            padding: 0 10px;
+            background-color: white;
+        }
+
+        .boton {
+            height: 42px;
+            padding: 0 30px;
+            border: none;
+            border-radius: 5px;
+            background-color: #00A35C;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .boton:hover {
+            background-color: #00472B;
+        }
+
+        /* =========================
+           TABLA
+           ========================= */
+
+        .tabla {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .tabla th {
+            background-color: #00A35C;
+            color: white;
+            padding: 11px;
+            border: 1px solid #dddddd;
+            text-align: center;
+        }
+
+        .tabla td {
+            padding: 10px;
+            border: 1px solid #dddddd;
+            text-align: center;
+        }
+
+        .tabla tr:nth-child(even) {
+            background-color: #f7f7f7;
+        }
+
+        .mensajes {
+            margin-bottom: 20px;
+        }
+
+        .volver {
+            display: inline-block;
+            margin-top: 20px;
+            color: #00472B;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .volver:hover {
+            text-decoration: underline;
+        }
+    </style>
+</h:head>
+
+
+<h:body>
+
+    <div class="pagina">
+
+        <!-- MENÚ LATERAL -->
+        <aside class="sidebar">
+
+            <div class="logo">
+                SAUAP
+            </div>
+
+            <h:link value="⌂  Inicio"
+                    outcome="dashboard"
+                    styleClass="menu-item"/>
+
+            <a href="#" class="menu-item">
+                ♙ Profesores
+            </a>
+
+            <a href="#" class="menu-item">
+                ▣ Materias
+            </a>
+
+            <a href="#" class="menu-item">
+                ☑ Asignaciones
+            </a>
+
+            <h:link value="⌕  Consultas"
+                    outcome="consulta-profesor"
+                    styleClass="menu-item activo"/>
+
+            <div class="cerrar-sesion">
+                <h:link value="Cerrar sesión"
+                        outcome="login"
+                        styleClass="menu-item"/>
+            </div>
+
+        </aside>
+
+
+        <!-- CONTENIDO -->
+        <main class="contenido">
+
+            <div class="encabezado">
+
+                <h2>Consulta de Profesor</h2>
+
+                <div class="usuario">
+                    ● #{sessionBean.usuarioLogueado.correo}
+                </div>
+
+            </div>
+
+
+            <div class="tarjeta">
+
+                <div class="titulo">
+                    Consulta de Asignaciones por Profesor
+                </div>
+
+
+                <h:form>
+
+                    <h:messages styleClass="mensajes"/>
+
+                    <!-- SELECCIÓN DEL PROFESOR -->
+                    <div class="barra-busqueda">
+
+                        <div class="grupo">
+
+                            <h:outputLabel
+                                    for="profesor"
+                                    value="Profesor"/>
+
+                            <h:selectOneMenu
+                                    id="profesor"
+                                    value="#{consultaProfesorUI.idProfesorSeleccionado}"
+                                    styleClass="selector">
+
+                                <f:selectItem
+                                        itemLabel="-- Seleccionar profesor --"
+                                        itemValue="#{null}"
+                                        noSelectionOption="true"/>
+
+                                <f:selectItems
+                                        value="#{consultaProfesorUI.profesores}"
+                                        var="profesor"
+                                        itemValue="#{profesor.id}"
+                                        itemLabel="#{profesor.nombre} #{profesor.apellidoPaterno} #{profesor.apellidoMaterno}"/>
+
+                            </h:selectOneMenu>
+
+                        </div>
+
+
+                        <h:commandButton
+                                value="Buscar"
+                                action="#{consultaProfesorUI.buscar}"
+                                styleClass="boton"/>
+
+                    </div>
+
+
+                    <!-- RESULTADOS -->
+                    <h:dataTable
+                            value="#{consultaProfesorUI.asignaciones}"
+                            var="asignacion"
+                            styleClass="tabla"
+                            rendered="#{not empty consultaProfesorUI.asignaciones}">
+
+
+                        <h:column>
+
+                            <f:facet name="header">
+                                Id
+                            </f:facet>
+
+                            #{asignacion.id}
+
+                        </h:column>
+
+
+                        <h:column>
+
+                            <f:facet name="header">
+                                Profesor
+                            </f:facet>
+
+                            #{asignacion.profesor.nombre}
+                            #{asignacion.profesor.apellidoPaterno}
+
+                        </h:column>
+
+
+                        <h:column>
+
+                            <f:facet name="header">
+                                Unidad de Aprendizaje
+                            </f:facet>
+
+                            #{asignacion.unidad.nombre}
+
+                        </h:column>
+
+
+                        <h:column>
+
+                            <f:facet name="header">
+                                Día
+                            </f:facet>
+
+                            #{asignacion.diaSemana}
+
+                        </h:column>
+
+
+                        <h:column>
+
+                            <f:facet name="header">
+                                Hora Inicio
+                            </f:facet>
+
+                            #{asignacion.horaInicio}
+
+                        </h:column>
+
+
+                        <h:column>
+
+                            <f:facet name="header">
+                                Hora Fin
+                            </f:facet>
+
+                            #{asignacion.horaFin}
+
+                        </h:column>
+
+                    </h:dataTable>
+
+
+                    <h:link value="← Volver al inicio"
+                            outcome="dashboard"
+                            styleClass="volver"/>
+
+                </h:form>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</h:body>
+
+</html>

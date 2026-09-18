@@ -16,6 +16,31 @@ public class AsignacionDAO extends AbstractDAO<Asignacion> {
         super(Asignacion.class);
     }
 
+
+    public List<Asignacion> listarTodosConDetalles() {
+        EntityManager em = HibernateUtil.getEntityManagerFactory().createEntityManager();
+
+        try {
+            TypedQuery<Asignacion> q = em.createQuery(
+                    "SELECT a FROM Asignacion a " +
+                            "JOIN FETCH a.profesor " +
+                            "JOIN FETCH a.unidad " +
+                            "ORDER BY a.profesor.apellidoPaterno, " +
+                            "a.profesor.apellidoMaterno, " +
+                            "a.profesor.nombre, " +
+                            "a.diaSemana, " +
+                            "a.horaInicio",
+                    Asignacion.class
+            );
+
+            return q.getResultList();
+
+        } finally {
+            em.close();
+        }
+    }
+
+
     /**
      * Busca traslapes de un profesor en un día específico.
      * Si idExcluir no es null, excluye esa asignación (para modificar).

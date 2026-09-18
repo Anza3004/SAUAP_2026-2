@@ -30,6 +30,12 @@ public class DelegateAsignacion {
         return locator.getAsignacionDAO().listarTodos();
     }
 
+
+    public List<Asignacion> consultarAsignacionesConDetalles() {
+        return locator.getAsignacionDAO().listarTodosConDetalles();
+    }
+
+
     public List<Asignacion> buscarTraslapes(Integer idProfesor, String dia,
                                             LocalTime horaInicio, LocalTime horaFin) {
         return locator.getAsignacionDAO()

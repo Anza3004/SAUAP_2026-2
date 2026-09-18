@@ -1,7 +1,6 @@
 package mx.desarrollo.ui;
 
 import jakarta.enterprise.context.SessionScoped;
-import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
@@ -13,6 +12,9 @@ public class DashboardBean implements Serializable {
 
     @Inject
     private SessionBean sessionBean;
+
+    @Inject
+    private ConsultaAsignacionBeanUI consultaAsignacionUI;
 
     private String vistaActual = "inicio";
 
@@ -32,9 +34,16 @@ public class DashboardBean implements Serializable {
         vistaActual = "asignacion";
     }
 
-    public void mostrarConsultas() {
-        vistaActual = "consultas";
+
+    public void mostrarConsultaProfesores() {
+        vistaActual = "consultaProfesores";
     }
+
+    public void mostrarConsultaAsignaciones() {
+        consultaAsignacionUI.mostrarTodas();
+        vistaActual = "consultaAsignaciones";
+    }
+
 
     public String cerrarSesion() {
         // 1. Limpiar el usuario del bean de sesión
@@ -72,7 +81,15 @@ public class DashboardBean implements Serializable {
         return "unidad".equals(vistaActual);
     }
 
+    public boolean isVistaConsultaProfesores() {
+        return "consultaProfesores".equals(vistaActual);
+    }
+
+    public boolean isVistaConsultaAsignaciones() {
+        return "consultaAsignaciones".equals(vistaActual);
+    }
+
     public boolean isVistaConsultas() {
-        return "consultas".equals(vistaActual);
+        return isVistaConsultaProfesores() || isVistaConsultaAsignaciones();
     }
 }
