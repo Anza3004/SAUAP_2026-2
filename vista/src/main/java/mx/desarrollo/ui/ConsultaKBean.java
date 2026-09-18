@@ -89,7 +89,6 @@ public class ConsultaKBean implements Serializable {
     public void init() {
 
         FacadeUnidad facadeUnidad = new FacadeUnidad();
-
         materias = facadeUnidad.consultarUnidades();
 
         if (materias == null) {
