@@ -216,10 +216,18 @@
 
                 <h:panelGroup rendered="#{dashboardBean.vistaConsultas}" layout="block">
                     <div class="placeholder-view">
+
                         <h2>Consultas</h2>
-                        <p>En construccion por Karen y Ricardo</p>
+                        <p>Seleccione el tipo de consulta</p>
+
+                        <h:form>
+                            <h:commandButton value="Consulta de Materias"
+                                             action="consultaK?faces-redirect=true" />
+                        </h:form>
+
                     </div>
                 </h:panelGroup>
+
             </main>
         </div>
     </div>

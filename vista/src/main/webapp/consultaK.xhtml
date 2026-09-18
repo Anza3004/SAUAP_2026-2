@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+<h:head>
+    <title>SAUAP - Consulta de Materias</title>
+    <h:outputStylesheet library="css" name="styles.css" />
+</h:head>
+
+<h:body>
+
+    <div class="consulta-page">
+S
+        <!-- total de conetnido  -->
+        <main class="consulta-contenido">
+
+            <!-- Usuario -->
+            <div class="consulta-usuario">
+                <span class="usuario-icono">●</span>
+                <span>Administrador</span>
+                <span>⌄</span>
+            </div>
+
+            <h:form id="formMaterias">
+
+                <!-- Título -->
+                <div class="consulta-titulo">
+                    Consulta Unidades de Aprendizaje
+                </div>
+
+                <div class="consulta-subtitulo">
+                    Lista de Materias
+                </div>
+
+
+                <!-- para buscar -->
+                <div class="consulta-toolbar">
+
+                    <h:inputText
+                            value="#{consultaKBean.filtroNombre}"
+                            styleClass="consulta-buscador"
+                            placeholder="🔍 Buscar materia" />
+
+                    <h:commandButton
+                            value="Buscar"
+                            action="#{consultaKBean.buscar}"
+                            styleClass="btn-buscar" />
+
+                    <button type="button"
+                            class="btn-nueva-materia">
+                        + Nueva Materia
+                    </button>
+
+
+                </div>
+
+                <!-- la tabla principal -->
+                <h:dataTable
+                        value="#{consultaKBean.materiasFiltradas}"
+                        var="materia"
+                        styleClass="tabla-materias">
+
+                    <h:column>
+                        <f:facet name="header">Id</f:facet>
+                        <h:outputText value="#{materia.id}" />
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">Nombre de la unidad</f:facet>
+                        <h:outputText value="#{materia.nombre}" />
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">H.Clase</f:facet>
+                        <h:outputText value="#{materia.horasClase}" />
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">H.Taller</f:facet>
+                        <h:outputText value="#{materia.horasTaller}" />
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">H.Laboratorio</f:facet>
+                        <h:outputText value="#{materia.horasLaboratorio}" />
+                    </h:column>
+
+                    <h:column>
+                        <f:facet name="header">Acción</f:facet>
+
+                        <h:commandButton
+                                value="✎"
+                                action="#{consultaKBean.seleccionarParaModificar(materia)}"
+                                styleClass="btn-editar" />
+
+                        <h:commandButton
+                                value="🗑"
+                                action="#{consultaKBean.seleccionarParaEliminar(materia)}"
+                                styleClass="btn-eliminar" />
+
+                    </h:column>
+
+                </h:dataTable>
+
+                <!-- para modificar -->
+                <h:panelGroup
+                        rendered="#{consultaKBean.mostrarModificar}"
+                        layout="block"
+                        styleClass="panel-modificar">
+
+                    <div class="panel-titulo">
+                        Modificador Unidad
+                    </div>
+
+                    <label>Nombre</label>
+
+                    <h:inputText
+                            value="#{consultaKBean.materiaSeleccionada.nombre}"
+                            styleClass="campo-modificar" />
+
+                    <div class="horas-container">
+
+                        <div>
+                            <label>Horas Clase</label>
+                            <h:inputText
+                                    value="#{consultaKBean.materiaSeleccionada.horasClase}"
+                                    styleClass="campo-horas" />
+                        </div>
+
+                        <div>
+                            <label>Horas Taller</label>
+                            <h:inputText
+                                    value="#{consultaKBean.materiaSeleccionada.horasTaller}"
+                                    styleClass="campo-horas" />
+                        </div>
+
+                        <div>
+                            <label>Horas Laboratorio</label>
+                            <h:inputText
+                                    value="#{consultaKBean.materiaSeleccionada.horasLaboratorio}"
+                                    styleClass="campo-horas" />
+                        </div>
+
+                    </div>
+
+                    <div class="acciones-formulario">
+
+                        <h:commandButton
+                                value="Cancelar"
+                                action="#{consultaKBean.cancelar}"
+                                styleClass="btn-cancelar" />
+
+                        <h:commandButton
+                                value="Guardar Cambios"
+                                action="#{consultaKBean.guardarCambios}"
+                                styleClass="btn-guardar" />
+
+                    </div>
+
+                </h:panelGroup>
+
+                <!-- para la elminiacion -->
+                <h:panelGroup
+                        rendered="#{consultaKBean.mostrarEliminar}"
+                        layout="block"
+                        styleClass="panel-eliminar">
+
+                    <div class="panel-titulo">
+                        Eliminar Unidad
+                    </div>
+
+                    <div class="eliminar-contenido">
+
+                        <div class="icono-basura">
+                            🗑
+                        </div>
+
+                        <div>
+                            ¿Estás seguro que deseas eliminar esta unidad?
+
+                            <strong>
+                                <h:outputText
+                                        value="#{consultaKBean.materiaSeleccionada.nombre}" />
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <div class="acciones-formulario">
+
+                        <h:commandButton
+                                value="Cancelar"
+                                action="#{consultaKBean.cancelar}"
+                                styleClass="btn-cancelar-eliminar" />
+
+                        <h:commandButton
+                                value="Eliminar"
+                                action="#{consultaKBean.eliminar}"
+                                styleClass="btn-confirmar-eliminar" />
+
+                    </div>
+
+                </h:panelGroup>
+
+            </h:form>
+
+        </main>
+
+    </div>
+
+</h:body>
+
+</html>
