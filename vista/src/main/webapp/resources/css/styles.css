@@ -605,3 +605,57 @@ table.grid-horario td.celda-ocupada {
     color: var(--verde-900);
     box-shadow: var(--sombra);
 }
+
+.form-row-unidad-3 {
+    display: flex;
+    gap: 20px;
+}
+
+.form-row-unidad-3 > .form-group { flex: 1; }
+
+.helper-text {
+    font-size: 0.75rem;
+    color: var(--tinta-suave);
+    margin-top: 4px;
+}
+.tabla-materias {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    overflow: hidden;
+    box-shadow: 0 4px 12px -8px rgba(15,61,43,.15);
+}
+
+.tabla-materias .tabla-header th {
+    background: var(--verde-tint);
+    color: var(--verde-900);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-align: left;
+    padding: 14px 20px;
+    border-bottom: 2px solid var(--verde-600);
+}
+
+.tabla-materias .tabla-row td {
+    padding: 14px 20px;
+    font-size: 0.9rem;
+    color: var(--tinta);
+    border-bottom: 1px solid var(--borde);
+    vertical-align: middle;
+}
+
+.tabla-materias .tabla-row:last-child td {
+    border-bottom: none;
+}
+
+.tabla-materias .tabla-row:hover {
+    background: var(--lino);
+}
+
+.btn-sm {
+    padding: 6px 14px !important;
+    font-size: 0.82rem !important;
+}
