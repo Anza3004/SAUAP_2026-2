@@ -201,9 +201,76 @@
                 </h:panelGroup>
 
                 <h:panelGroup rendered="#{dashboardBean.vistaProfesor}" layout="block">
-                    <div class="placeholder-view">
-                        <h2>Modulo de Profesores</h2>
-                        <p>En construccion por Arturo</p>
+                    <div class="asignacion-container">
+                        <h2 class="asignacion-title">Alta de Profesor</h2>
+
+                        <h:form id="profesorForm">
+                            <h:inputHidden id="mensajeAlerta" value="#{profesorBean.mensajeAlerta}" />
+                            <h:inputHidden id="tipoAlerta" value="#{profesorBean.tipoAlerta}" />
+
+                            <div class="form-group">
+                                <label class="form-label">Nombre</label>
+                                <h:inputText id="nombre" styleClass="form-select"
+                                             value="#{profesorBean.nuevoProfesor.nombre}" required="true" />
+                                <h:message for="nombre" styleClass="form-error" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Apellido paterno</label>
+                                <h:inputText id="apellidoPaterno" styleClass="form-select"
+                                             value="#{profesorBean.nuevoProfesor.apellidoPaterno}" required="true" />
+                                <h:message for="apellidoPaterno" styleClass="form-error" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Apellido materno</label>
+                                <h:inputText id="apellidoMaterno" styleClass="form-select"
+                                             value="#{profesorBean.nuevoProfesor.apellidoMaterno}" required="true" />
+                                <h:message for="apellidoMaterno" styleClass="form-error" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">RFC</label>
+                                <h:inputText id="rfc" styleClass="form-select"
+                                             value="#{profesorBean.nuevoProfesor.rfc}" required="true" />
+                                <h:message for="rfc" styleClass="form-error" />
+                            </div>
+
+                            <div class="asignacion-botones">
+                                <h:commandButton value="Guardar profesor"
+                                                 action="#{profesorBean.guardar()}"
+                                                 styleClass="btn btn-primary" />
+                            </div>
+                        </h:form>
+
+                        <h3 class="asignacion-title" style="font-size:1.1rem; margin-top:24px;">Profesores registrados</h3>
+
+                        <h:dataTable value="#{profesorBean.profesores}" var="p" styleClass="profesor-table">
+                            <h:column>
+                                <f:facet name="header">Nombre</f:facet>
+                                #{p.nombre}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Apellido paterno</f:facet>
+                                #{p.apellidoPaterno}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Apellido materno</f:facet>
+                                #{p.apellidoMaterno}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">RFC</f:facet>
+                                #{p.rfc}
+                            </h:column>
+                            <h:column>
+                                <h:form>
+                                    <h:commandButton value="Eliminar"
+                                                     action="#{profesorBean.eliminar(p)}"
+                                                     styleClass="btn btn-danger"
+                                                     onclick="if (!confirm('¿Seguro que quieres eliminar a #{p.nombre} #{p.apellidoPaterno}?')) return false;" />
+                                </h:form>
+                            </h:column>
+                        </h:dataTable>
                     </div>
                 </h:panelGroup>
 
