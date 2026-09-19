@@ -20,9 +20,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
-
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 @Named("asignacionBean")
-@SessionScoped
+@ViewScoped
 public class AsignacionBean implements Serializable {
 
     private final FacadeAsignacion facade = new FacadeAsignacion();

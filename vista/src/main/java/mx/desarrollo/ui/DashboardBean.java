@@ -1,7 +1,6 @@
 package mx.desarrollo.ui;
 
 import jakarta.enterprise.context.SessionScoped;
-import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
@@ -14,7 +13,15 @@ public class DashboardBean implements Serializable {
     @Inject
     private SessionBean sessionBean;
 
+    @Inject
+    private ConsultaBean consultaBean;
+
+    @Inject
+    private AsignacionBean asignacionBean;
+
     private String vistaActual = "inicio";
+
+    // ============ NAVEGACIÓN ============
 
     public void mostrarInicio() {
         vistaActual = "inicio";
@@ -29,24 +36,24 @@ public class DashboardBean implements Serializable {
     }
 
     public void mostrarAsignacion() {
+        asignacionBean.cargarDatos();  // Recarga los combos
         vistaActual = "asignacion";
     }
 
     public void mostrarConsultas() {
+        consultaBean.cargarDatos();    // Recarga los combos
         vistaActual = "consultas";
     }
 
+    // ============ CERRAR SESIÓN ============
+
     public String cerrarSesion() {
-        // 1. Limpiar el usuario del bean de sesión
         sessionBean.cerrarSesion();
-
-        // 2. Resetear la vista a "inicio" (para la próxima sesión)
         this.vistaActual = "inicio";
-
-        // 3. Redirigir al login con faces-redirect=true
-        //    El redirect fuerza una nueva petición HTTP que limpia el ViewState
         return "/login.xhtml?faces-redirect=true";
     }
+
+    // ============ GETTERS / SETTERS ============
 
     public String getVistaActual() {
         return vistaActual;

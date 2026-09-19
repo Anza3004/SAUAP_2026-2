@@ -17,9 +17,10 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
 @Named("consultaBean")
-@SessionScoped
+@ViewScoped
 public class ConsultaBean implements Serializable {
 
     private static final String POR_PROFESOR = "PROFESOR";
