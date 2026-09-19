@@ -117,4 +117,14 @@ public class FacadeAsignacion {
         int lab = unidad.getHorasLaboratorio() != null ? unidad.getHorasLaboratorio() : 0;
         return clase + taller + lab;
     }
+    /**
+     * Elimina un bloque completo de asignaciones (mismo grupo).
+     * Retorna cuántas asignaciones se eliminaron.
+     */
+    public int eliminarBloque(String grupo) {
+        if (grupo == null || grupo.isBlank()) {
+            throw new ValidacionException("El grupo no puede estar vacío.");
+        }
+        return delegate.eliminarPorGrupo(grupo);
+    }
 }

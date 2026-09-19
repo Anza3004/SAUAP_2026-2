@@ -2,8 +2,6 @@ package mx.desarrollo.ui;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
-import jakarta.faces.application.FacesMessage;
-import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import mx.desarrollo.entity.Asignacion;
 import mx.desarrollo.entity.Profesor;
@@ -15,7 +13,6 @@ import mx.desarrollo.negocio.integration.ValidacionException;
 
 import java.io.Serializable;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Named("consultaBean")
@@ -46,6 +43,10 @@ public class ConsultaBean implements Serializable {
     private String horaInicioModificar;
     private String horaFinModificar;
 
+    // Mensajes para mostrar como alert en el cliente
+    private String mensajeAlerta;
+    private String tipoAlerta; // "success" | "error"
+
     @PostConstruct
     public void init() {
         cargarDatos();
@@ -56,30 +57,39 @@ public class ConsultaBean implements Serializable {
             profesores = facadeProfesor.consultarProfesores();
             unidades = facadeUnidad.consultarUnidades();
         } catch (Exception e) {
-            addError("Error al cargar datos: " + e.getMessage());
+            setAlerta("Error al cargar datos: " + e.getMessage(), "error");
         }
     }
 
     // ============ BÚSQUEDA ============
 
     public void buscar() {
+        mensajeAlerta = null;
+        tipoAlerta = null;
+
         try {
             if ("PROFESOR".equals(tipoBusqueda)) {
                 if (idProfesorSeleccionado == null) {
-                    addError("Debe seleccionar un profesor.");
+                    setAlerta("Debe seleccionar un profesor.", "error");
                     return;
                 }
                 resultados = facade.consultarPorProfesor(idProfesorSeleccionado);
             } else {
                 if (idUnidadSeleccionada == null) {
-                    addError("Debe seleccionar una unidad.");
+                    setAlerta("Debe seleccionar una unidad.", "error");
                     return;
                 }
                 resultados = facade.consultarPorUnidad(idUnidadSeleccionada);
             }
-            System.out.println(">>> Consulta: " + resultados.size() + " resultados");
+
+            if (resultados == null || resultados.isEmpty()) {
+                setAlerta("No se encontraron resultados.", "error");
+            } else {
+                setAlerta("Se encontraron " + resultados.size() + " asignaciones.", "success");
+            }
+
         } catch (Exception e) {
-            addError("Error al buscar: " + e.getMessage());
+            setAlerta("Error al buscar: " + e.getMessage(), "error");
         }
     }
 
@@ -87,6 +97,8 @@ public class ConsultaBean implements Serializable {
         resultados = null;
         idProfesorSeleccionado = null;
         idUnidadSeleccionada = null;
+        mensajeAlerta = null;
+        tipoAlerta = null;
     }
 
     // ============ MODIFICAR ============
@@ -99,9 +111,12 @@ public class ConsultaBean implements Serializable {
     }
 
     public void guardarModificacion() {
+        mensajeAlerta = null;
+        tipoAlerta = null;
+
         try {
             if (asignacionSeleccionada == null) {
-                addError("No hay asignación seleccionada.");
+                setAlerta("No hay asignación seleccionada.", "error");
                 return;
             }
 
@@ -111,33 +126,42 @@ public class ConsultaBean implements Serializable {
             asignacionSeleccionada.setHoraFin(parseHora(horaFinModificar));
 
             facade.modificarAsignacion(asignacionSeleccionada);
-            addInfo("✅ Asignación modificada correctamente.");
+            setAlerta("✅ Asignación modificada correctamente.", "success");
 
             // Recargar resultados
             buscar();
 
         } catch (ValidacionException e) {
-            addError(e.getMessage());
+            setAlerta("⚠️ " + e.getMessage(), "error");
         } catch (Exception e) {
-            addError("Error inesperado: " + e.getMessage());
+            setAlerta("Error inesperado: " + e.getMessage(), "error");
         }
     }
 
     // ============ ELIMINAR ============
 
     public void eliminar(Asignacion a) {
+        mensajeAlerta = null;
+        tipoAlerta = null;
+
         try {
             facade.eliminarAsignacion(a);
-            addInfo("✅ Asignación eliminada correctamente.");
+            setAlerta("✅ Asignación eliminada correctamente.", "success");
             buscar(); // Recargar
         } catch (ValidacionException e) {
-            addError(e.getMessage());
+            setAlerta("⚠️ " + e.getMessage(), "error");
         } catch (Exception e) {
-            addError("Error inesperado: " + e.getMessage());
+            setAlerta("Error inesperado: " + e.getMessage(), "error");
         }
     }
 
     // ============ AUXILIARES ============
+
+    private void setAlerta(String mensaje, String tipo) {
+        this.mensajeAlerta = mensaje;
+        this.tipoAlerta = tipo;
+        System.out.println(">>> Alerta [" + tipo + "]: " + mensaje);
+    }
 
     private LocalTime parseHora(String hora) {
         if (hora == null || hora.isBlank()) return null;
@@ -147,16 +171,6 @@ public class ConsultaBean implements Serializable {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    private void addInfo(String mensaje) {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, mensaje, null));
-    }
-
-    private void addError(String mensaje) {
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_ERROR, mensaje, null));
     }
 
     // ============ GETTERS Y SETTERS ============
@@ -190,4 +204,10 @@ public class ConsultaBean implements Serializable {
 
     public String getHoraFinModificar() { return horaFinModificar; }
     public void setHoraFinModificar(String horaFinModificar) { this.horaFinModificar = horaFinModificar; }
+
+    public String getMensajeAlerta() { return mensajeAlerta; }
+    public void setMensajeAlerta(String mensajeAlerta) { this.mensajeAlerta = mensajeAlerta; }
+
+    public String getTipoAlerta() { return tipoAlerta; }
+    public void setTipoAlerta(String tipoAlerta) { this.tipoAlerta = tipoAlerta; }
 }

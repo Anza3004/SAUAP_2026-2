@@ -5,7 +5,7 @@ import jakarta.persistence.TypedQuery;
 import mx.desarrollo.entity.Asignacion;
 import mx.desarrollo.persistencia.persistence.AbstractDAO;
 import mx.desarrollo.persistencia.persistence.HibernateUtil;
-
+import jakarta.persistence.EntityTransaction;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
@@ -110,6 +110,32 @@ public class AsignacionDAO extends AbstractDAO<Asignacion> {
             q.setParameter("idExcluir", idAsignacionExcluir);
             BigDecimal total = q.getSingleResult();
             return total != null ? total.longValue() : 0L;
+        } finally {
+            em.close();
+        }
+    }
+    /**
+     * Elimina todas las asignaciones que tengan el mismo grupo.
+     * Se usa para eliminar un bloque completo (clase + taller + lab).
+     */
+    public int eliminarPorGrupo(String grupo) {
+        if (grupo == null || grupo.isBlank()) {
+            return 0;
+        }
+
+        EntityManager em = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            int eliminadas = em.createQuery(
+                            "DELETE FROM Asignacion a WHERE a.grupo = :grupo")
+                    .setParameter("grupo", grupo)
+                    .executeUpdate();
+            tx.commit();
+            return eliminadas;
+        } catch (RuntimeException e) {
+            if (tx.isActive()) tx.rollback();
+            throw e;
         } finally {
             em.close();
         }

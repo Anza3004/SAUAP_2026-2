@@ -282,9 +282,99 @@
                 </h:panelGroup>
 
                 <h:panelGroup rendered="#{dashboardBean.vistaConsultas}" layout="block">
-                    <div class="placeholder-view">
-                        <h2>Consultas</h2>
-                        <p>En construccion por Karen y Ricardo</p>
+                    <div class="asignacion-container">
+                        <h2 class="asignacion-title">Consultas de Asignaciones</h2>
+
+                        <h:form id="consultaForm">
+                            <!-- Alerta -->
+                            <h:inputHidden id="mensajeAlerta" value="#{consultaBean.mensajeAlerta}" />
+                            <h:inputHidden id="tipoAlerta" value="#{consultaBean.tipoAlerta}" />
+
+                            <!-- Filtro de búsqueda -->
+                            <div class="form-group">
+                                <label class="form-label">Tipo de búsqueda:</label>
+                                <h:selectOneRadio value="#{consultaBean.tipoBusqueda}" layout="pageDirection">
+                                    <f:selectItem itemValue="PROFESOR" itemLabel="Por Profesor" />
+                                    <f:selectItem itemValue="UNIDAD" itemLabel="Por Unidad de Aprendizaje" />
+                                </h:selectOneRadio>
+                            </div>
+
+                            <!-- Select dinámico -->
+                            <div class="form-group">
+                                <h:panelGroup rendered="#{consultaBean.tipoBusqueda == 'PROFESOR'}">
+                                    <label class="form-label">Profesor:</label>
+                                    <h:selectOneMenu value="#{consultaBean.idProfesorSeleccionado}"
+                                                     styleClass="form-select">
+                                        <f:selectItem itemValue="#{null}" itemLabel="-- Seleccionar --" />
+                                        <f:selectItems value="#{consultaBean.profesores}"
+                                                       var="p"
+                                                       itemValue="#{p.id}"
+                                                       itemLabel="#{p.nombre} #{p.apellidoPaterno}" />
+                                    </h:selectOneMenu>
+                                </h:panelGroup>
+
+                                <h:panelGroup rendered="#{consultaBean.tipoBusqueda == 'UNIDAD'}">
+                                    <label class="form-label">Unidad de aprendizaje:</label>
+                                    <h:selectOneMenu value="#{consultaBean.idUnidadSeleccionada}"
+                                                     styleClass="form-select">
+                                        <f:selectItem itemValue="#{null}" itemLabel="-- Seleccionar --" />
+                                        <f:selectItems value="#{consultaBean.unidades}"
+                                                       var="u"
+                                                       itemValue="#{u.id}"
+                                                       itemLabel="#{u.nombre}" />
+                                    </h:selectOneMenu>
+                                </h:panelGroup>
+                            </div>
+
+                            <!-- Botones de búsqueda -->
+                            <div class="asignacion-botones">
+                                <h:commandButton value="🔍 Buscar"
+                                                 action="#{consultaBean.buscar()}"
+                                                 styleClass="btn btn-primary"
+                                                 ajax="false" />
+                                <h:commandButton value="🔄 Limpiar"
+                                                 action="#{consultaBean.limpiar()}"
+                                                 styleClass="btn btn-secondary"
+                                                 ajax="false" />
+                            </div>
+
+                            <!-- Resultados -->
+                            <h:panelGroup rendered="#{not empty consultaBean.resultados}">
+                                <h3 class="asignacion-title" style="font-size:1.1rem; margin-top:24px;">
+                                    Resultados (#{consultaBean.resultados.size()})
+                                </h3>
+                                <h:dataTable value="#{consultaBean.resultados}" var="a" styleClass="profesor-table">
+                                    <h:column>
+                                        <f:facet name="header">ID</f:facet>
+                                        #{a.id}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Profesor</f:facet>
+                                        #{a.profesor.nombre} #{a.profesor.apellidoPaterno}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Unidad</f:facet>
+                                        #{a.unidad.nombre}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Día</f:facet>
+                                        #{a.diaSemana}
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Horario</f:facet>
+                                        #{a.horaInicio} - #{a.horaFin}
+                                    </h:column>
+                                    <h:column>
+                                        <h:form>
+                                            <h:commandButton value="🗑️ Eliminar"
+                                                             action="#{consultaBean.eliminar(a)}"
+                                                             styleClass="btn btn-danger"
+                                                             onclick="if (!confirm('¿Eliminar esta asignación?')) return false;" />
+                                        </h:form>
+                                    </h:column>
+                                </h:dataTable>
+                            </h:panelGroup>
+                        </h:form>
                     </div>
                 </h:panelGroup>
             </main>
@@ -309,25 +399,33 @@
 
         // 🆕 Mostrar alerta después del POST
         function mostrarAlertaSiExiste() {
-            var inputMensaje = document.querySelector('[id$="mensajeAlerta"]');
-            var inputTipo = document.querySelector('[id$="tipoAlerta"]');
+            // Asignación
+            procesarAlerta('asignacionForm', 'mensajeAlerta', 'tipoAlerta');
+            // Profesor
+            procesarAlerta('profesorForm', 'mensajeAlerta', 'tipoAlerta');
+            // Consultas
+            procesarAlerta('consultaForm', 'mensajeAlerta', 'tipoAlerta');
+        }
 
-            if (inputMensaje && inputMensaje.value && inputMensaje.value.trim() !== '') {
-                var mensaje = inputMensaje.value;
-                var tipo = inputTipo ? inputTipo.value : 'info';
+        function procesarAlerta(formPrefix, idMensaje, idTipo) {
+            var inputMensaje = document.querySelector('[id$="' + formPrefix + ':' + idMensaje + '"]');
+            var inputTipo = document.querySelector('[id$="' + formPrefix + ':' + idTipo + '"]');
 
-                if (tipo === 'success') {
-                    alert('✅ ' + mensaje);
-                } else if (tipo === 'error') {
-                    alert('⚠️ ' + mensaje);
-                } else {
-                    alert(mensaje);
-                }
+            if (!inputMensaje || !inputMensaje.value || inputMensaje.value.trim() === '') return;
 
-                // Limpiar los hidden
-                inputMensaje.value = '';
-                if (inputTipo) inputTipo.value = '';
+            var mensaje = inputMensaje.value;
+            var tipo = inputTipo ? inputTipo.value : 'info';
+
+            if (tipo === 'success') {
+                alert('✅ ' + mensaje);
+            } else if (tipo === 'error') {
+                alert('⚠️ ' + mensaje);
+            } else {
+                alert(mensaje);
             }
+
+            inputMensaje.value = '';
+            if (inputTipo) inputTipo.value = '';
         }
 
         function actualizarHorasRequeridas() {

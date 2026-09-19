@@ -62,4 +62,10 @@ public class DelegateAsignacion {
         return locator.getAsignacionDAO()
                 .sumarMinutosAsignadosExcluyendo(idUnidad, idAsignacionExcluir);
     }
+    /**
+     * Elimina todas las asignaciones con el mismo grupo.
+     */
+    public int eliminarPorGrupo(String grupo) {
+        return locator.getAsignacionDAO().eliminarPorGrupo(grupo);
+    }
 }

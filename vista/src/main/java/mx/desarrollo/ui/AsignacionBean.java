@@ -2,6 +2,7 @@ package mx.desarrollo.ui;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import mx.desarrollo.entity.Asignacion;
@@ -16,7 +17,9 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 @Named("asignacionBean")
 @SessionScoped
@@ -36,7 +39,6 @@ public class AsignacionBean implements Serializable {
 
     private String gridData;
 
-    // 🆕 Mensajes para mostrar como alert en el cliente
     private String mensajeAlerta;
     private String tipoAlerta; // "success" | "error"
 
@@ -56,7 +58,7 @@ public class AsignacionBean implements Serializable {
             profesores = facadeProfesor.consultarProfesores();
             unidades = facadeUnidad.consultarUnidades();
         } catch (Exception e) {
-            System.err.println("Error al cargar datos: " + e.getMessage());
+            setAlerta("Error al cargar datos: " + e.getMessage(), "error");
         }
     }
 
@@ -76,17 +78,11 @@ public class AsignacionBean implements Serializable {
         }
     }
 
-    /**
-     * Guarda las asignaciones del grid.
-     * Los mensajes se envían al cliente vía mensajeAlerta + tipoAlerta.
-     */
     public void guardarDesdeGrid() {
-        // Resetear mensajes
         mensajeAlerta = null;
         tipoAlerta = null;
 
         try {
-            // 1. Validaciones básicas
             if (idProfesorSeleccionado == null) {
                 setAlerta("Debe seleccionar un profesor.", "error");
                 return;
@@ -108,7 +104,6 @@ public class AsignacionBean implements Serializable {
                 return;
             }
 
-            // 2. Parsear
             List<Asignacion> asignacionesNuevas = parsearGridData(gridData, p, u);
 
             if (asignacionesNuevas.isEmpty()) {
@@ -116,7 +111,6 @@ public class AsignacionBean implements Serializable {
                 return;
             }
 
-            // 3. Validar horas del bloque completo
             int minutosRequeridos = calcularMinutosRequeridos(u);
             long minutosPintados = calcularMinutosDelBloque(asignacionesNuevas);
 
@@ -134,7 +128,7 @@ public class AsignacionBean implements Serializable {
                 return;
             }
 
-            // 4. Validar TODAS las asignaciones ANTES de guardar
+            // Validar TODAS las asignaciones ANTES de guardar
             List<String> erroresValidacion = new ArrayList<>();
             for (Asignacion a : asignacionesNuevas) {
                 try {
@@ -145,7 +139,6 @@ public class AsignacionBean implements Serializable {
                 }
             }
 
-            // 5. Si hay errores → NO guardar ninguna
             if (!erroresValidacion.isEmpty()) {
                 StringBuilder sb = new StringBuilder();
                 sb.append("No se guardó ninguna asignación.\n");
@@ -157,14 +150,13 @@ public class AsignacionBean implements Serializable {
                 return;
             }
 
-            // 6. TODO OK → Guardar todas
+            // Guardar todas
             int guardadas = 0;
             for (Asignacion a : asignacionesNuevas) {
                 facade.altaAsignacion(a);
                 guardadas++;
             }
 
-            // 7. Mostrar éxito
             setAlerta("✅ " + guardadas + " asignación(es) guardada(s) correctamente.", "success");
 
             cargarDatos();
@@ -209,8 +201,14 @@ public class AsignacionBean implements Serializable {
         return h + "h " + m + "min";
     }
 
+    /**
+     * Parsea el grid y genera UN grupo UUID para TODAS las asignaciones del bloque.
+     */
     private List<Asignacion> parsearGridData(String json, Profesor p, UnidadAprendizaje u) {
         List<Asignacion> resultado = new ArrayList<>();
+
+        // 🆕 Generar un grupo único para TODAS las asignaciones del bloque
+        String grupo = UUID.randomUUID().toString();
 
         json = json.replace("&quot;", "\"")
                 .replace("&amp;", "&")
@@ -278,6 +276,7 @@ public class AsignacionBean implements Serializable {
                     a.setDiaSemana(dia);
                     a.setHoraInicio(parseHoraSegura(horaInicio));
                     a.setHoraFin(parseHoraSegura(horaFin));
+                    a.setGrupo(grupo);  // 🆕 MISMO grupo para todas
 
                     resultado.add(a);
                     i = j;
@@ -285,6 +284,7 @@ public class AsignacionBean implements Serializable {
             }
         }
 
+        System.out.println(">>> Grupo generado: " + grupo + " (" + resultado.size() + " asignaciones)");
         return resultado;
     }
 
