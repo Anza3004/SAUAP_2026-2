@@ -266,7 +266,8 @@
                                 <h:form>
                                     <h:commandButton value="Eliminar"
                                                      action="#{profesorBean.eliminar(p)}"
-                                                     styleClass="btn btn-danger" />
+                                                     styleClass="btn btn-danger"
+                                                     onclick="if (!confirm('¿Seguro que quieres eliminar a #{p.nombre} #{p.apellidoPaterno}?')) return false;" />
                                 </h:form>
                             </h:column>
                         </h:dataTable>
