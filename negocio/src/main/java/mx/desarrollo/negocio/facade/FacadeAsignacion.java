@@ -39,11 +39,27 @@ public class FacadeAsignacion {
         validarAsignacion(asignacion, null);
     }
 
-    public void eliminarAsignacion(Asignacion asignacion) {
+    public int eliminarAsignacion(Asignacion asignacion) {
         if (asignacion == null || asignacion.getId() == null) {
             throw new ValidacionException("Debe seleccionar una asignación válida.");
         }
+
+        String grupo = asignacion.getGrupo();
+        if (grupo != null && !grupo.isBlank()) {
+            return delegate.eliminarPorGrupo(grupo);
+        }
+
+        // Registros creados antes de existir el campo grupo: se toman como una sola
+        // asignación todos los horarios sin grupo del mismo profesor y unidad.
+        if (asignacion.getProfesor() != null && asignacion.getProfesor().getId() != null
+                && asignacion.getUnidad() != null && asignacion.getUnidad().getId() != null) {
+            return delegate.eliminarPorProfesorUnidadSinGrupo(
+                    asignacion.getProfesor().getId(),
+                    asignacion.getUnidad().getId());
+        }
+
         delegate.eliminarAsignacion(asignacion);
+        return 1;
     }
 
     public Asignacion buscarPorId(Integer id) {

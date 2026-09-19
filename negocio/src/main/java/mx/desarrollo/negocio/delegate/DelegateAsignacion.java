@@ -68,4 +68,7 @@ public class DelegateAsignacion {
     public int eliminarPorGrupo(String grupo) {
         return locator.getAsignacionDAO().eliminarPorGrupo(grupo);
     }
+    public int eliminarPorProfesorUnidadSinGrupo(Integer idProfesor, Integer idUnidad) {
+        return locator.getAsignacionDAO().eliminarPorProfesorUnidadSinGrupo(idProfesor, idUnidad);
+    }
 }

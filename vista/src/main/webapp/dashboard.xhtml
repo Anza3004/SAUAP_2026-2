@@ -286,57 +286,105 @@
                         <h2 class="asignacion-title">Consultas de Asignaciones</h2>
 
                         <h:form id="consultaForm">
-                            <!-- Alerta -->
+                            <!-- Alerta (los ids deben quedarse así: los lee procesarAlerta() en el JS) -->
                             <h:inputHidden id="mensajeAlerta" value="#{consultaBean.mensajeAlerta}" />
                             <h:inputHidden id="tipoAlerta" value="#{consultaBean.tipoAlerta}" />
 
-                            <!-- Filtro de búsqueda -->
-                            <div class="form-group">
-                                <label class="form-label">Tipo de búsqueda:</label>
-                                <h:selectOneRadio value="#{consultaBean.tipoBusqueda}" layout="pageDirection">
-                                    <f:selectItem itemValue="PROFESOR" itemLabel="Por Profesor" />
-                                    <f:selectItem itemValue="UNIDAD" itemLabel="Por Unidad de Aprendizaje" />
-                                </h:selectOneRadio>
+                            <!-- Búsqueda por profesor -->
+                            <div class="consulta-bloque">
+                                <div class="consulta-fila">
+                                    <div class="form-group">
+                                        <label class="form-label">Buscar por profesor</label>
+                                        <h:selectOneMenu id="selProfesor"
+                                                         value="#{consultaBean.idProfesorSeleccionado}"
+                                                         styleClass="form-select">
+                                            <f:selectItem itemValue="#{null}" itemLabel="-- Seleccionar --" />
+                                            <f:selectItems value="#{consultaBean.profesores}"
+                                                           var="p"
+                                                           itemValue="#{p.id}"
+                                                           itemLabel="#{p.nombre} #{p.apellidoPaterno}" />
+                                        </h:selectOneMenu>
+                                    </div>
+                                    <h:commandButton value="🔍 Buscar"
+                                                     action="#{consultaBean.buscarPorProfesor()}"
+                                                     styleClass="btn btn-primary"
+                                                     ajax="false" />
+                                </div>
                             </div>
 
-                            <!-- Select dinámico -->
-                            <div class="form-group">
-                                <h:panelGroup rendered="#{consultaBean.tipoBusqueda == 'PROFESOR'}">
-                                    <label class="form-label">Profesor:</label>
-                                    <h:selectOneMenu value="#{consultaBean.idProfesorSeleccionado}"
-                                                     styleClass="form-select">
-                                        <f:selectItem itemValue="#{null}" itemLabel="-- Seleccionar --" />
-                                        <f:selectItems value="#{consultaBean.profesores}"
-                                                       var="p"
-                                                       itemValue="#{p.id}"
-                                                       itemLabel="#{p.nombre} #{p.apellidoPaterno}" />
-                                    </h:selectOneMenu>
-                                </h:panelGroup>
-
-                                <h:panelGroup rendered="#{consultaBean.tipoBusqueda == 'UNIDAD'}">
-                                    <label class="form-label">Unidad de aprendizaje:</label>
-                                    <h:selectOneMenu value="#{consultaBean.idUnidadSeleccionada}"
-                                                     styleClass="form-select">
-                                        <f:selectItem itemValue="#{null}" itemLabel="-- Seleccionar --" />
-                                        <f:selectItems value="#{consultaBean.unidades}"
-                                                       var="u"
-                                                       itemValue="#{u.id}"
-                                                       itemLabel="#{u.nombre}" />
-                                    </h:selectOneMenu>
-                                </h:panelGroup>
+                            <!-- Búsqueda por unidad de aprendizaje -->
+                            <div class="consulta-bloque">
+                                <div class="consulta-fila">
+                                    <div class="form-group">
+                                        <label class="form-label">Buscar por unidad de aprendizaje</label>
+                                        <h:selectOneMenu id="selUnidad"
+                                                         value="#{consultaBean.idUnidadSeleccionada}"
+                                                         styleClass="form-select">
+                                            <f:selectItem itemValue="#{null}" itemLabel="-- Seleccionar --" />
+                                            <f:selectItems value="#{consultaBean.unidades}"
+                                                           var="u"
+                                                           itemValue="#{u.id}"
+                                                           itemLabel="#{u.nombre}" />
+                                        </h:selectOneMenu>
+                                    </div>
+                                    <h:commandButton value="🔍 Buscar"
+                                                     action="#{consultaBean.buscarPorUnidad()}"
+                                                     styleClass="btn btn-primary"
+                                                     ajax="false" />
+                                </div>
                             </div>
 
-                            <!-- Botones de búsqueda -->
                             <div class="asignacion-botones">
-                                <h:commandButton value="🔍 Buscar"
-                                                 action="#{consultaBean.buscar()}"
-                                                 styleClass="btn btn-primary"
-                                                 ajax="false" />
                                 <h:commandButton value="🔄 Limpiar"
                                                  action="#{consultaBean.limpiar()}"
                                                  styleClass="btn btn-secondary"
                                                  ajax="false" />
                             </div>
+
+                            <!-- Panel de edición: solo aparece al pulsar "Editar" en una fila -->
+                            <h:panelGroup rendered="#{consultaBean.asignacionSeleccionada != null}"
+                                          layout="block" styleClass="consulta-edicion">
+                                <h3 class="consulta-edicion-titulo">Modificar horario</h3>
+                                <p class="consulta-edicion-resumen">#{consultaBean.resumenModificar}</p>
+
+                                <div class="consulta-fila">
+                                    <div class="form-group">
+                                        <label class="form-label">Nuevo día</label>
+                                        <h:selectOneMenu id="selDiaModificar"
+                                                         value="#{consultaBean.diaModificar}"
+                                                         styleClass="form-select">
+                                            <f:selectItem itemValue="LUNES" itemLabel="Lunes" />
+                                            <f:selectItem itemValue="MARTES" itemLabel="Martes" />
+                                            <f:selectItem itemValue="MIERCOLES" itemLabel="Miércoles" />
+                                            <f:selectItem itemValue="JUEVES" itemLabel="Jueves" />
+                                            <f:selectItem itemValue="VIERNES" itemLabel="Viernes" />
+                                        </h:selectOneMenu>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Nueva hora de inicio</label>
+                                        <h:selectOneMenu id="selHoraModificar"
+                                                         value="#{consultaBean.horaInicioModificar}"
+                                                         styleClass="form-select">
+                                            <f:selectItems value="#{consultaBean.horasInicio}" />
+                                        </h:selectOneMenu>
+                                    </div>
+                                </div>
+
+                                <p class="consulta-edicion-nota">
+                                    Se conserva la duración (#{consultaBean.duracionModificar}); la hora de fin se calcula sola.
+                                </p>
+
+                                <div class="asignacion-botones">
+                                    <h:commandButton value="Cancelar"
+                                                     action="#{consultaBean.cancelarModificacion()}"
+                                                     styleClass="btn btn-secondary"
+                                                     ajax="false" />
+                                    <h:commandButton value="Guardar cambios"
+                                                     action="#{consultaBean.guardarModificacion()}"
+                                                     styleClass="btn btn-primary"
+                                                     ajax="false" />
+                                </div>
+                            </h:panelGroup>
 
                             <!-- Resultados -->
                             <h:panelGroup rendered="#{not empty consultaBean.resultados}">
@@ -365,12 +413,21 @@
                                         #{a.horaInicio} - #{a.horaFin}
                                     </h:column>
                                     <h:column>
-                                        <h:form>
-                                            <h:commandButton value="🗑️ Eliminar"
+                                        <f:facet name="header">Grupo</f:facet>
+                                        <span class="codigo-bloque">#{consultaBean.codigoGrupo(a)}</span>
+                                    </h:column>
+                                    <h:column>
+                                        <!-- Sin <h:form> aquí: ya estamos dentro de consultaForm y los forms anidados no son válidos -->
+                                        <div class="acciones-fila">
+                                            <h:commandButton value="✏️ Editar"
+                                                             action="#{consultaBean.abrirModificar(a)}"
+                                                             styleClass="btn btn-secondary"
+                                                             ajax="false" />
+                                            <h:commandButton value="🗑️ Eliminar asignación"
                                                              action="#{consultaBean.eliminar(a)}"
                                                              styleClass="btn btn-danger"
-                                                             onclick="if (!confirm('¿Eliminar esta asignación?')) return false;" />
-                                        </h:form>
+                                                             onclick="if (!confirm('¿Eliminar la asignación completa? Se borrarán todos sus horarios (clase, taller y laboratorio), no solo esta fila.')) return false;" />
+                                        </div>
                                     </h:column>
                                 </h:dataTable>
                             </h:panelGroup>

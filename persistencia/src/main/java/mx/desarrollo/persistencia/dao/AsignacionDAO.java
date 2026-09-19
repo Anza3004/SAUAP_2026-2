@@ -140,4 +140,26 @@ public class AsignacionDAO extends AbstractDAO<Asignacion> {
             em.close();
         }
     }
+    public int eliminarPorProfesorUnidadSinGrupo(Integer idProfesor, Integer idUnidad) {
+        EntityManager em = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            int eliminadas = em.createQuery(
+                            "DELETE FROM Asignacion a " +
+                                    "WHERE a.profesor.id = :idProfesor " +
+                                    "AND a.unidad.id = :idUnidad " +
+                                    "AND (a.grupo IS NULL OR a.grupo = '')")
+                    .setParameter("idProfesor", idProfesor)
+                    .setParameter("idUnidad", idUnidad)
+                    .executeUpdate();
+            tx.commit();
+            return eliminadas;
+        } catch (RuntimeException e) {
+            if (tx.isActive()) tx.rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
 }

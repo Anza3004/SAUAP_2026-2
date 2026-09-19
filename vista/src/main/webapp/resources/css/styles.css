@@ -635,3 +635,49 @@ table.grid-horario td.celda-ocupada {
     border-top: 1px solid var(--borde);
     font-size: 0.9rem;
 }
+/* Agregar al final de styles.css */
+
+/* ============ CONSULTAS ============ */
+
+.consulta-bloque {
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    padding: 18px 20px;
+    margin-bottom: 16px;
+}
+
+.consulta-fila {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.consulta-fila .form-group {
+    flex: 1;
+    margin: 0;
+}
+
+.consulta-fila .btn {
+    height: 44px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* .btn-secondary se usaba en el botón Limpiar pero no estaba definido */
+.btn-secondary {
+    background: var(--blanco);
+    color: var(--tinta);
+    border: 1.5px solid var(--borde);
+}
+
+.btn-secondary:hover {
+    background: var(--verde-tint);
+}
+
+@media (max-width: 860px) {
+    .consulta-fila {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
