@@ -38,6 +38,17 @@ public class ProfesorBean implements Serializable {
             tipoAlerta = "error";
         }
     }
+    public void eliminar(Profesor profesor) {
+        try {
+            facade.eliminarProfesor(profesor);
+            cargarProfesores();
+            mensajeAlerta = "Profesor eliminado";
+            tipoAlerta = "sucess";
+        }catch (ValidacionException e) {
+            mensajeAlerta = e.getMessage();
+            tipoAlerta = "error";
+        }
+    }
 
     private void cargarProfesores() {
         profesores = facade.consultarProfesoresOrdenados();

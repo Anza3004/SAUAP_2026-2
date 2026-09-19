@@ -242,6 +242,34 @@
                                                  styleClass="btn btn-primary" />
                             </div>
                         </h:form>
+
+                        <h3 class="asignacion-title" style="font-size:1.1rem; margin-top:24px;">Profesores registrados</h3>
+
+                        <h:dataTable value="#{profesorBean.profesores}" var="p" styleClass="profesor-table">
+                            <h:column>
+                                <f:facet name="header">Nombre</f:facet>
+                                #{p.nombre}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Apellido paterno</f:facet>
+                                #{p.apellidoPaterno}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Apellido materno</f:facet>
+                                #{p.apellidoMaterno}
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">RFC</f:facet>
+                                #{p.rfc}
+                            </h:column>
+                            <h:column>
+                                <h:form>
+                                    <h:commandButton value="Eliminar"
+                                                     action="#{profesorBean.eliminar(p)}"
+                                                     styleClass="btn btn-danger" />
+                                </h:form>
+                            </h:column>
+                        </h:dataTable>
                     </div>
                 </h:panelGroup>
 
