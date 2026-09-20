@@ -19,6 +19,9 @@ public class DashboardBean implements Serializable {
     @Inject
     private AsignacionBean asignacionBean;
 
+    @Inject
+    private ProfesorBean profesorBean;
+
     private String vistaActual = "inicio";
 
     // ============ NAVEGACIÓN ============
@@ -28,6 +31,9 @@ public class DashboardBean implements Serializable {
     }
 
     public void mostrarProfesor() {
+        // El mensaje anterior ya se mostró: no debe reaparecer al volver a esta sección.
+        profesorBean.setMensajeAlerta(null);
+        profesorBean.setTipoAlerta(null);
         vistaActual = "profesor";
     }
 
@@ -36,11 +42,12 @@ public class DashboardBean implements Serializable {
     }
 
     public void mostrarAsignacion() {
-        asignacionBean.cargarDatos();  // Recarga los combos
+        asignacionBean.reiniciar();    // Como la primera vez: sin selección, contadores en 0/0, sin mensaje viejo
         vistaActual = "asignacion";
     }
 
     public void mostrarConsultas() {
+        consultaBean.limpiar();        // Sin resultados, selección ni mensaje anteriores
         consultaBean.cargarDatos();    // Recarga los combos
         vistaActual = "consultas";
     }

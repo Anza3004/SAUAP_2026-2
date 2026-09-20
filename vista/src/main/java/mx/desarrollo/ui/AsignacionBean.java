@@ -63,6 +63,27 @@ public class AsignacionBean implements Serializable {
         }
     }
 
+    /**
+     * Deja la pantalla como la primera vez que se entra: sin profesor ni unidad,
+     * contadores en 0/0, sin horario pintado y sin mensajes anteriores.
+     */
+    public void reiniciar() {
+        limpiarSeleccion();
+        mensajeAlerta = null;
+        tipoAlerta = null;
+        cargarDatos();
+    }
+
+    /** Vuelve el formulario a su estado inicial (no toca el mensaje). */
+    private void limpiarSeleccion() {
+        idProfesorSeleccionado = null;
+        idUnidadSeleccionada = null;
+        horasClaseSeleccionada = 0;
+        horasTallerSeleccionada = 0;
+        horasLabSeleccionada = 0;
+        gridData = null;
+    }
+
     public void onUnidadChange() {
         if (idUnidadSeleccionada == null) {
             horasClaseSeleccionada = 0;
@@ -161,16 +182,15 @@ public class AsignacionBean implements Serializable {
             setAlerta("✅ " + guardadas + " asignación(es) guardada(s) correctamente.", "success");
 
             cargarDatos();
-            gridData = null;
-            idProfesorSeleccionado = null;
-            idUnidadSeleccionada = null;
-            horasClaseSeleccionada = 0;
-            horasTallerSeleccionada = 0;
-            horasLabSeleccionada = 0;
 
         } catch (Exception e) {
             setAlerta("Error inesperado: " + e.getMessage(), "error");
             e.printStackTrace();
+        } finally {
+            // Con o sin error la página se recarga completa: el horario pintado y los contadores
+            // se pierden. El formulario vuelve a su estado inicial para no quedar a medias
+            // (unidad elegida con contadores en 0/0). El mensaje se conserva para mostrarlo.
+            limpiarSeleccion();
         }
     }
 
@@ -278,6 +298,7 @@ public class AsignacionBean implements Serializable {
                     a.setHoraInicio(parseHoraSegura(horaInicio));
                     a.setHoraFin(parseHoraSegura(horaFin));
                     a.setGrupo(grupo);  // 🆕 MISMO grupo para todas
+                    a.setTipo(tipoEntry.getKey());  // CLASE | TALLER | LABORATORIO
 
                     resultado.add(a);
                     i = j;

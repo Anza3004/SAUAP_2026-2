@@ -481,8 +481,9 @@
                                 </h3>
                                 <h:dataTable value="#{consultaBean.resultados}" var="a" styleClass="profesor-table">
                                     <h:column>
-                                        <f:facet name="header">ID</f:facet>
-                                        #{a.id}
+                                        <f:facet name="header">Tipo</f:facet>
+                                        <span class="tipo-badge tipo-badge-#{consultaBean.claseTipo(a)}"
+                                              title="#{consultaBean.nombreTipo(a)}">#{consultaBean.letraTipo(a)}</span>
                                     </h:column>
                                     <h:column>
                                         <f:facet name="header">Profesor</f:facet>
@@ -561,7 +562,9 @@
             var mensaje = inputMensaje.value;
             var tipo = inputTipo ? inputTipo.value : 'info';
 
-            if (tipo === 'success') {
+            if (/^[\u2705\u26A0]/.test(mensaje)) {
+                alert(mensaje);                 // el mensaje ya trae su ícono (✅ / ⚠️)
+            } else if (tipo === 'success') {
                 alert('✅ ' + mensaje);
             } else if (tipo === 'error') {
                 alert('⚠️ ' + mensaje);

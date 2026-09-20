@@ -681,3 +681,29 @@ table.grid-horario td.celda-ocupada {
         align-items: stretch;
     }
 }
+
+
+.tipo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--blanco);
+    cursor: default;
+}
+
+/* Mismos colores que el grid de Asignaciones */
+.tipo-badge-clase   { background: var(--azul); }
+.tipo-badge-taller  { background: var(--naranja); }
+.tipo-badge-lab     { background: var(--verde-600); }
+
+/* Asignaciones guardadas antes de existir el campo tipo */
+.tipo-badge-sin-tipo {
+    background: transparent;
+    color: var(--tinta-suave);
+    font-weight: 400;
+}

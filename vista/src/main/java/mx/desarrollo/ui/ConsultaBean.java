@@ -231,6 +231,7 @@ public class ConsultaBean implements Serializable {
             copia.setProfesor(asignacionSeleccionada.getProfesor());
             copia.setUnidad(asignacionSeleccionada.getUnidad());
             copia.setGrupo(asignacionSeleccionada.getGrupo());
+            copia.setTipo(asignacionSeleccionada.getTipo());
             copia.setDiaSemana(diaModificar);
             copia.setHoraInicio(nuevoInicio);
             copia.setHoraFin(nuevoFin);
@@ -333,7 +334,8 @@ public class ConsultaBean implements Serializable {
     public String getResumenModificar() {
         if (asignacionSeleccionada == null) return "";
         Asignacion a = asignacionSeleccionada;
-        return nombreProfesor(a).trim() + " · " + nombreUnidad(a) + " · "
+        String tipo = tipoNormalizado(a).isEmpty() ? "" : " · " + nombreTipo(a);
+        return nombreProfesor(a).trim() + " · " + nombreUnidad(a) + tipo + " · "
                 + a.getDiaSemana() + " " + a.getHoraInicio() + " - " + a.getHoraFin();
     }
 
@@ -369,6 +371,42 @@ public class ConsultaBean implements Serializable {
             codigo = Math.floorMod(grupo.hashCode(), 10) + codigo.substring(1);
         }
         return codigo;
+    }
+
+    // ============ TIPO DE HORARIO (C / T / L) ============
+
+    /** Letra de la columna "Tipo": C = Clase, T = Taller, L = Laboratorio; "—" si no tiene tipo. */
+    public String letraTipo(Asignacion a) {
+        return switch (tipoNormalizado(a)) {
+            case "CLASE" -> "C";
+            case "TALLER" -> "T";
+            case "LABORATORIO" -> "L";
+            default -> "—";
+        };
+    }
+
+    /** Nombre completo, para el tooltip de la letra. */
+    public String nombreTipo(Asignacion a) {
+        return switch (tipoNormalizado(a)) {
+            case "CLASE" -> "Clase";
+            case "TALLER" -> "Taller";
+            case "LABORATORIO" -> "Laboratorio";
+            default -> "Sin tipo (asignación anterior al campo tipo)";
+        };
+    }
+
+    /** Clase CSS del distintivo: clase, taller, lab o sin-tipo. */
+    public String claseTipo(Asignacion a) {
+        return switch (tipoNormalizado(a)) {
+            case "CLASE" -> "clase";
+            case "TALLER" -> "taller";
+            case "LABORATORIO" -> "lab";
+            default -> "sin-tipo";
+        };
+    }
+
+    private static String tipoNormalizado(Asignacion a) {
+        return a == null || a.getTipo() == null ? "" : a.getTipo().trim().toUpperCase();
     }
 
     // ============ GETTERS Y SETTERS ============
