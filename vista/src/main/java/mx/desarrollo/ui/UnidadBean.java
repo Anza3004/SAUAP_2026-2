@@ -55,6 +55,9 @@ public class UnidadBean implements Serializable {
             facade.eliminarUnidad(u);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Exito", "Unidad '" + u.getNombre() + "' eliminada."));
             cargarListaUnidades();
+        } catch (ValidacionException e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", e.getMessage()));
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No se pudo eliminar la unidad."));
         }

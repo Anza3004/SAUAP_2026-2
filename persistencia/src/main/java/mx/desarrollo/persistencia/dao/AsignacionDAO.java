@@ -80,6 +80,32 @@ public class AsignacionDAO extends AbstractDAO<Asignacion> {
         }
     }
 
+    public List<String> listarNombresUnidadesPorProfesor(Integer idProfesor) {
+        EntityManager em = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        try {
+            TypedQuery<String> q = em.createQuery(
+                    "SELECT DISTINCT a.unidad.nombre FROM Asignacion a " +
+                            "WHERE a.profesor.id = :id ORDER BY a.unidad.nombre", String.class);
+            q.setParameter("id", idProfesor);
+            return q.getResultList();
+        }finally {
+            em.close();
+        }
+    }
+
+    public List<String> listarNombresProfesoresPorUnidad(Integer idUnidad) {
+        EntityManager em = HibernateUtil.getEntityManagerFactory().createEntityManager();
+        try {
+            TypedQuery<String> q = em.createQuery(
+                    "SELECT DISTINCT CONCAT(a.profesor.nombre, ' ', a.profesor.apellidoPaterno) " +
+                            "FROM Asignacion a WHERE a.unidad.id = :id", String.class);
+            q.setParameter("id", idUnidad);
+            return q.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     /**
      * Suma el total de minutos de todas las asignaciones de una unidad.
      * ⚠️ Ya NO se usa para validar, solo para mostrar info.

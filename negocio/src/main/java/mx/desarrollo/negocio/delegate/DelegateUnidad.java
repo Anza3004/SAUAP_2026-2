@@ -21,6 +21,10 @@ public class DelegateUnidad {
         locator.getUnidadDAO().eliminar(unidad);
     }
 
+    public List<String> consultarProfesoresAsignados(Integer idUnidad) {
+        return locator.getAsignacionDAO().listarNombresProfesoresPorUnidad(idUnidad);
+    }
+
     public UnidadAprendizaje buscarPorId(Integer id) {
         return locator.getUnidadDAO().buscarPorId(id);
     }
