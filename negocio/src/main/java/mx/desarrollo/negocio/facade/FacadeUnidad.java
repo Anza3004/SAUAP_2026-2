@@ -32,6 +32,14 @@ public class FacadeUnidad {
         if (unidad == null || unidad.getId() == null) {
             throw new ValidacionException("Debe seleccionar una unidad válida.");
         }
+        List<String> profesores = delegate.consultarProfesoresAsignados(unidad.getId());
+        if (!profesores.isEmpty()) {
+            throw new ValidacionException(
+                    "No se puede eliminar la materia '" + unidad.getNombre()
+                            + "' porque tiene asignaciones con: "
+                            + String.join(", ", profesores)
+                            + ". Elimine primero esas asignaciones.");
+        }
         delegate.eliminarUnidad(unidad);
     }
 

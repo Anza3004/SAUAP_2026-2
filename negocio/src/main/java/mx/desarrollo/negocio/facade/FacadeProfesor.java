@@ -60,6 +60,14 @@ public class FacadeProfesor {
         if (profesor == null || profesor.getId() == null) {
             throw new ValidacionException("Debe seleccionar un profesor válido.");
         }
+        List<String> unidades = delegate.consultarUnidadesAsignadas(profesor.getId());
+        if (!unidades.isEmpty()) {
+            throw new ValidacionException(
+                    "No se puede eliminar al profesor " + profesor.getNombre() + " "
+                            + profesor.getApellidoPaterno() + " por que esta asignado a: "
+                            + String.join(", ", unidades)
+                            + ". Elimine primero la asignaciones que tiene el profesor.");
+        }
         delegate.eliminarProfesor(profesor);
     }
 

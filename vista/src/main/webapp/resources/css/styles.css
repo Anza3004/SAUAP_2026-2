@@ -329,6 +329,13 @@ main{
     box-shadow: 0 0 0 3px rgba(28, 122, 79, 0.12);
 }
 
+.form-error {
+    color: #dc2626;
+    font-size: 0.85rem;
+    margin-top: 6px;
+    display: block;
+}
+
 /* Tipos de hora */
 .tipos-hora {
     display: flex;
@@ -604,4 +611,99 @@ table.grid-horario td.celda-ocupada {
     background: #fff;
     color: var(--verde-900);
     box-shadow: var(--sombra);
+}
+
+.profesor-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--blanco);
+    border: 1.5px solid var(--borde);
+    border-radius: var(--radio-md);
+    overflow: hidden;
+}
+
+.profesor-table th {
+    text-align: left;
+    padding: 12px 16px;
+    background: var(--verde-tint);
+    color: var(--verde-900);
+    font-size: 0.85rem;
+}
+
+.profesor-table td {
+    padding: 12px 16px;
+    border-top: 1px solid var(--borde);
+    font-size: 0.9rem;
+}
+/* Agregar al final de styles.css */
+
+/* ============ CONSULTAS ============ */
+
+.consulta-bloque {
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-md);
+    padding: 18px 20px;
+    margin-bottom: 16px;
+}
+
+.consulta-fila {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.consulta-fila .form-group {
+    flex: 1;
+    margin: 0;
+}
+
+.consulta-fila .btn {
+    height: 44px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* .btn-secondary se usaba en el botón Limpiar pero no estaba definido */
+.btn-secondary {
+    background: var(--blanco);
+    color: var(--tinta);
+    border: 1.5px solid var(--borde);
+}
+
+.btn-secondary:hover {
+    background: var(--verde-tint);
+}
+
+@media (max-width: 860px) {
+    .consulta-fila {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+
+.tipo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--blanco);
+    cursor: default;
+}
+
+/* Mismos colores que el grid de Asignaciones */
+.tipo-badge-clase   { background: var(--azul); }
+.tipo-badge-taller  { background: var(--naranja); }
+.tipo-badge-lab     { background: var(--verde-600); }
+
+/* Asignaciones guardadas antes de existir el campo tipo */
+.tipo-badge-sin-tipo {
+    background: transparent;
+    color: var(--tinta-suave);
+    font-weight: 400;
 }

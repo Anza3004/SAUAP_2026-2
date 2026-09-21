@@ -2,7 +2,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
-      xmlns:f="jakarta.faces.core">
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
 
 <h:head>
     <meta charset="UTF-8" />
@@ -27,44 +28,51 @@
 
             <h:form id="navForm" styleClass="nav-form">
                 <nav class="primary-nav">
-                    <h:commandLink action="#{dashboardBean.mostrarInicio()}"
-                                   styleClass="nav-item #{dashboardBean.vistaInicio ? 'active' : ''}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9a1 1 0 0 0 1 1H9a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h2.5a1 1 0 0 0 1-1v-9"/></svg>
+                    <p:commandLink action="#{dashboardBean.mostrarInicio()}"
+                                   styleClass="nav-item #{dashboardBean.vistaInicio ? 'active' : ''}"
+                                   ajax="false">
+                        <i class="pi pi-home" style="margin-right:10px;"></i>
                         <span>Inicio</span>
-                    </h:commandLink>
+                    </p:commandLink>
 
-                    <h:commandLink action="#{dashboardBean.mostrarProfesor()}"
-                                   styleClass="nav-item #{dashboardBean.vistaProfesor ? 'active' : ''}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.2 2.9-5 5.5-5s4.9 1.8 5.5 5"/><path d="M15.5 8.3a3 3 0 1 1 3.2 5"/><path d="M15 14.3c2.2.2 4 1.9 4.5 4.7"/></svg>
+                    <p:commandLink action="#{dashboardBean.mostrarProfesor()}"
+                                   styleClass="nav-item #{dashboardBean.vistaProfesor ? 'active' : ''}"
+                                   ajax="false">
+                        <i class="pi pi-users" style="margin-right:10px;"></i>
                         <span>Profesores</span>
-                    </h:commandLink>
+                    </p:commandLink>
 
-                    <h:commandLink action="#{dashboardBean.mostrarUnidad()}"
-                                   styleClass="nav-item #{dashboardBean.vistaUnidad ? 'active' : ''}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H17a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6.5A1.5 1.5 0 0 1 5 19.5v-15Z"/><path d="M5 17.2c.5-.3 1-.5 1.6-.5H18"/><path d="M9 7.5h5M9 10.5h5"/></svg>
+                    <p:commandLink action="#{dashboardBean.mostrarUnidad()}"
+                                   styleClass="nav-item #{dashboardBean.vistaUnidad ? 'active' : ''}"
+                                   ajax="false">
+                        <i class="pi pi-book" style="margin-right:10px;"></i>
                         <span>Materias</span>
-                    </h:commandLink>
+                    </p:commandLink>
 
-                    <h:commandLink action="#{dashboardBean.mostrarAsignacion()}"
-                                   styleClass="nav-item #{dashboardBean.vistaAsignacion ? 'active' : ''}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="1.6"/><path d="M9 3.5h6a1 1 0 0 1 1 1V6H8V4.5a1 1 0 0 1 1-1Z"/><path d="m9 13 2 2 4-4.3"/></svg>
+                    <p:commandLink action="#{dashboardBean.mostrarAsignacion()}"
+                                   styleClass="nav-item #{dashboardBean.vistaAsignacion ? 'active' : ''}"
+                                   ajax="false">
+                        <i class="pi pi-calendar-plus" style="margin-right:10px;"></i>
                         <span>Asignaciones</span>
-                    </h:commandLink>
+                    </p:commandLink>
 
-                    <h:commandLink action="#{dashboardBean.mostrarConsultas()}"
-                                   styleClass="nav-item #{dashboardBean.vistaConsultas ? 'active' : ''}">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.2"/><path d="m20 20-4.6-4.6"/></svg>
+                    <p:commandLink action="#{dashboardBean.mostrarConsultas()}"
+                                   styleClass="nav-item #{dashboardBean.vistaConsultas ? 'active' : ''}"
+                                   ajax="false">
+                        <i class="pi pi-search" style="margin-right:10px;"></i>
                         <span>Consultas</span>
-                    </h:commandLink>
+                    </p:commandLink>
                 </nav>
             </h:form>
 
             <div class="sidebar-foot">
                 <h:form>
-                    <h:commandLink action="#{dashboardBean.cerrarSesion()}" styleClass="nav-item">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4h3a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3"/><path d="M10 8l-4 4 4 4"/><path d="M6 12h12"/></svg>
+                    <p:commandLink action="#{dashboardBean.cerrarSesion()}"
+                                   styleClass="nav-item"
+                                   ajax="false">
+                        <i class="pi pi-sign-out" style="margin-right:10px;"></i>
                         <span>Cerrar sesión</span>
-                    </h:commandLink>
+                    </p:commandLink>
                 </h:form>
             </div>
         </aside>
@@ -74,7 +82,7 @@
                 <div class="user-menu">
                     <button class="user-chip" id="userToggle" aria-expanded="false">
                         <span class="avatar">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5 20c.8-3.8 3.4-6 7-6s6.2 2.2 7 6"/></svg>
+                            <i class="pi pi-user" style="font-size:15px;"></i>
                         </span>
                         #{sessionBean.usuarioLogueado.correo}
                     </button>
@@ -82,12 +90,14 @@
             </div>
 
             <main>
+                <!-- ============ INICIO ============ -->
                 <h:panelGroup rendered="#{dashboardBean.vistaInicio}" layout="block">
                     <div class="hero-card">
                         <h:graphicImage library="images" name="SAUAPLOGO.jpeg" styleClass="mark" />
                     </div>
                 </h:panelGroup>
 
+                <!-- ============ ASIGNACIONES ============ -->
                 <h:panelGroup rendered="#{dashboardBean.vistaAsignacion}" layout="block">
                     <div class="asignacion-container">
                         <h2 class="asignacion-title">Asignar Materia a Profesor</h2>
@@ -99,7 +109,7 @@
                                 <span id="dataHorasLab" style="display:none;">#{asignacionBean.horasLabSeleccionada}</span>
                             </h:panelGroup>
 
-                            <!-- 🆕 Hidden con el mensaje y tipo -->
+                            <!-- ⚠️ NO CAMBIAR: el JS lee estos ids -->
                             <h:inputHidden id="mensajeAlerta" value="#{asignacionBean.mensajeAlerta}" />
                             <h:inputHidden id="tipoAlerta" value="#{asignacionBean.tipoAlerta}" />
 
@@ -107,35 +117,30 @@
                                 <div class="asignacion-controles">
                                     <div class="form-group">
                                         <label class="form-label">Profesor</label>
-                                        <h:selectOneMenu value="#{asignacionBean.idProfesorSeleccionado}"
+                                        <p:selectOneMenu value="#{asignacionBean.idProfesorSeleccionado}"
                                                          styleClass="form-select">
                                             <f:selectItem itemValue="#{null}" itemLabel="-- Seleccionar --" />
                                             <f:selectItems value="#{asignacionBean.profesores}"
                                                            var="p"
                                                            itemValue="#{p.id}"
                                                            itemLabel="#{p.nombre} #{p.apellidoPaterno}" />
-                                        </h:selectOneMenu>
+                                        </p:selectOneMenu>
                                     </div>
 
                                     <div class="form-group">
                                         <label class="form-label">Unidad de aprendizaje</label>
-                                        <h:selectOneMenu value="#{asignacionBean.idUnidadSeleccionada}"
+                                        <p:selectOneMenu value="#{asignacionBean.idUnidadSeleccionada}"
                                                          styleClass="form-select">
                                             <f:selectItem itemValue="#{null}" itemLabel="-- Seleccionar --" />
                                             <f:selectItems value="#{asignacionBean.unidades}"
                                                            var="u"
                                                            itemValue="#{u.id}"
                                                            itemLabel="#{u.nombre}" />
-                                            <f:ajax event="change"
-                                                    execute="@this"
+                                            <p:ajax event="change"
                                                     listener="#{asignacionBean.onUnidadChange()}"
-                                                    render="horasRequeridas"
-                                                    onevent="function(data) {
-                                                        if (data.status === 'success') {
-                                                            setTimeout(actualizarHorasRequeridas, 300);
-                                                        }
-                                                    }" />
-                                        </h:selectOneMenu>
+                                                    update="horasRequeridas"
+                                                    oncomplete="setTimeout(actualizarHorasRequeridas, 300)" />
+                                        </p:selectOneMenu>
                                     </div>
 
                                     <div class="tipos-hora">
@@ -177,47 +182,341 @@
                                                 <th>Viernes</th>
                                             </tr>
                                             </thead>
-                                            <tbody>
-                                            </tbody>
+                                            <tbody></tbody>
                                         </table>
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- ⚠️ NO CAMBIAR: el JS lee este id -->
                             <h:inputHidden id="gridData" value="#{asignacionBean.gridData}" />
 
                             <div class="asignacion-botones">
-                                <button type="button" class="btn btn-danger" onclick="limpiarGrid()">
+                                <button type="button"
+                                        class="btn btn-danger"
+                                        style="background:#dc2626 !important; border:none !important; color:white !important;"
+                                        onclick="limpiarGrid()">
                                     Cancelar
                                 </button>
-                                <h:commandButton value="Confirmar"
+                                <p:commandButton value="Confirmar"
                                                  action="#{asignacionBean.guardarDesdeGrid()}"
                                                  styleClass="btn btn-primary"
-                                                 onclick="if (!validarContadores()) return false; serializarGrid();"
-                                                 ajax="false" />
+                                                 style="background:#1c7a4f !important; border:none !important; color:white !important;"
+                                                 ajax="false"
+                                                 onclick="if (!validarContadores()) return false; serializarGrid();" />
                             </div>
                         </h:form>
                     </div>
                 </h:panelGroup>
 
+                <!-- ============ PROFESORES ============ -->
                 <h:panelGroup rendered="#{dashboardBean.vistaProfesor}" layout="block">
-                    <div class="placeholder-view">
-                        <h2>Modulo de Profesores</h2>
-                        <p>En construccion por Arturo</p>
+                    <div class="asignacion-container">
+                        <h2 class="asignacion-title">Alta de Profesor</h2>
+
+                        <h:form id="profesorForm">
+                            <!-- ⚠️ NO CAMBIAR: el JS lee estos ids -->
+                            <h:inputHidden id="mensajeAlerta" value="#{profesorBean.mensajeAlerta}" />
+                            <h:inputHidden id="tipoAlerta" value="#{profesorBean.tipoAlerta}" />
+
+                            <div class="form-group">
+                                <label class="form-label">Nombre</label>
+                                <p:inputText id="nombre" styleClass="form-select"
+                                             value="#{profesorBean.nuevoProfesor.nombre}" required="true" />
+                                <p:message for="nombre" styleClass="form-error" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Apellido paterno</label>
+                                <p:inputText id="apellidoPaterno" styleClass="form-select"
+                                             value="#{profesorBean.nuevoProfesor.apellidoPaterno}" required="true" />
+                                <p:message for="apellidoPaterno" styleClass="form-error" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Apellido materno</label>
+                                <p:inputText id="apellidoMaterno" styleClass="form-select"
+                                             value="#{profesorBean.nuevoProfesor.apellidoMaterno}" required="true" />
+                                <p:message for="apellidoMaterno" styleClass="form-error" />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">RFC</label>
+                                <p:inputText id="rfc" styleClass="form-select"
+                                             value="#{profesorBean.nuevoProfesor.rfc}" required="true" />
+                                <p:message for="rfc" styleClass="form-error" />
+                            </div>
+
+                            <div class="asignacion-botones">
+                                <p:commandButton value="Guardar profesor"
+                                                 action="#{profesorBean.guardar()}"
+                                                 styleClass="btn btn-primary"
+                                                 style="background:#1c7a4f !important; border:none !important; color:white !important;"
+                                                 ajax="false" />
+                            </div>
+                        </h:form>
+
+                        <h3 class="asignacion-title" style="font-size:1.1rem; margin-top:24px;">Profesores registrados</h3>
+
+                        <h:form id="tablaProfesoresForm">
+                            <p:dataTable value="#{profesorBean.profesores}" var="p"
+                                         styleClass="profesor-table"
+                                         emptyMessage="No hay profesores registrados">
+                                <p:column headerText="Nombre">#{p.nombre}</p:column>
+                                <p:column headerText="Apellido paterno">#{p.apellidoPaterno}</p:column>
+                                <p:column headerText="Apellido materno">#{p.apellidoMaterno}</p:column>
+                                <p:column headerText="RFC">#{p.rfc}</p:column>
+                                <p:column headerText="Acciones">
+                                    <p:commandButton value="Eliminar"
+                                                     action="#{profesorBean.eliminar(p)}"
+                                                     styleClass="btn btn-danger"
+                                                     style="background:#dc2626 !important; border:none !important; color:white !important;"
+                                                     ajax="false"
+                                                     onclick="if (!confirm('¿Seguro que quieres eliminar a #{p.nombre} #{p.apellidoPaterno}?')) return false;" />
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
                     </div>
                 </h:panelGroup>
 
+                <!-- ============ MATERIAS ============ -->
                 <h:panelGroup rendered="#{dashboardBean.vistaUnidad}" layout="block">
-                    <div class="placeholder-view">
-                        <h2>Modulo de Materias</h2>
-                        <p>En construccion por Red</p>
+                    <div class="asignacion-container">
+                        <h2 class="asignacion-title">Nueva Unidad de Aprendizaje</h2>
+
+                        <h:form id="formUnidadAprendizaje">
+                            <p:growl id="msgsUnidad" showDetail="true" life="4000" />
+
+                            <div class="form-group">
+                                <label class="form-label">Nombre de la unidad de aprendizaje</label>
+                                <p:inputText value="#{unidadBean.unidad.nombre}" styleClass="form-select" />
+                                <span class="helper-text">Max. 50 caracteres</span>
+                            </div>
+
+                            <div class="form-row-unidad-3">
+                                <div class="form-group">
+                                    <label class="form-label">Horas clase</label>
+                                    <p:selectOneMenu value="#{unidadBean.unidad.horasClase}" styleClass="form-select">
+                                        <f:selectItems value="#{unidadBean.cantidadesHoras}" />
+                                    </p:selectOneMenu>
+                                    <span class="helper-text">Máx 4</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Horas taller</label>
+                                    <p:selectOneMenu value="#{unidadBean.unidad.horasTaller}" styleClass="form-select">
+                                        <f:selectItems value="#{unidadBean.cantidadesHoras}" />
+                                    </p:selectOneMenu>
+                                    <span class="helper-text">Máx 4</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Horas laboratorio</label>
+                                    <p:selectOneMenu value="#{unidadBean.unidad.horasLaboratorio}" styleClass="form-select">
+                                        <f:selectItems value="#{unidadBean.cantidadesHoras}" />
+                                    </p:selectOneMenu>
+                                    <span class="helper-text">Máx 4</span>
+                                </div>
+                            </div>
+
+                            <div class="asignacion-botones">
+                                <p:commandButton value="Limpiar"
+                                                 styleClass="btn btn-danger"
+                                                 style="background:#dc2626 !important; border:none !important; color:white !important;"
+                                                 ajax="false"
+                                                 actionListener="#{unidadBean.limpiar}">
+                                </p:commandButton>
+                                <p:commandButton value="Guardar"
+                                                 action="#{unidadBean.guardar}"
+                                                 styleClass="btn btn-primary"
+                                                 style="background:#1c7a4f !important; border:none !important; color:white !important;"
+                                                 ajax="false" />
+                            </div>
+                        </h:form>
+
+                        <h2 class="asignacion-title" style="margin-top: 32px;">Materias registradas</h2>
+
+                        <h:form id="formTablaUnidades">
+                            <p:dataTable value="#{unidadBean.listaUnidades}"
+                                         var="u"
+                                         styleClass="tabla-materias"
+                                         rendered="#{not empty unidadBean.listaUnidades}"
+                                         emptyMessage="No hay materias registradas todavia.">
+                                <p:column headerText="Nombre">#{u.nombre}</p:column>
+                                <p:column headerText="Hrs. clase">#{u.horasClase}</p:column>
+                                <p:column headerText="Hrs. taller">#{u.horasTaller}</p:column>
+                                <p:column headerText="Hrs. laboratorio">#{u.horasLaboratorio}</p:column>
+                                <p:column headerText="">
+                                    <p:commandButton value="Eliminar"
+                                                     styleClass="btn btn-danger btn-sm"
+                                                     style="background:#dc2626 !important; border:none !important; color:white !important;"
+                                                     action="#{unidadBean.eliminarUnidad(u)}"
+                                                     ajax="false"
+                                                     onclick="return confirm('¿Eliminar la materia: #{u.nombre}?');" />
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
                     </div>
                 </h:panelGroup>
 
+                <!-- ============ CONSULTAS ============ -->
                 <h:panelGroup rendered="#{dashboardBean.vistaConsultas}" layout="block">
-                    <div class="placeholder-view">
-                        <h2>Consultas</h2>
-                        <p>En construccion por Karen y Ricardo</p>
+                    <div class="asignacion-container">
+                        <h2 class="asignacion-title">Consultas de Asignaciones</h2>
+
+                        <h:form id="consultaForm">
+                            <!-- ⚠️ NO CAMBIAR: el JS lee estos ids -->
+                            <h:inputHidden id="mensajeAlerta" value="#{consultaBean.mensajeAlerta}" />
+                            <h:inputHidden id="tipoAlerta" value="#{consultaBean.tipoAlerta}" />
+
+                            <!-- Búsqueda por profesor -->
+                            <div class="consulta-bloque">
+                                <div class="consulta-fila">
+                                    <div class="form-group">
+                                        <label class="form-label">Buscar por profesor</label>
+                                        <p:selectOneMenu id="selProfesor"
+                                                         value="#{consultaBean.idProfesorSeleccionado}"
+                                                         styleClass="form-select">
+                                            <f:selectItem itemValue="#{null}" itemLabel="-- Seleccionar --" />
+                                            <f:selectItems value="#{consultaBean.profesores}"
+                                                           var="p"
+                                                           itemValue="#{p.id}"
+                                                           itemLabel="#{p.nombre} #{p.apellidoPaterno}" />
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <p:commandButton value="Buscar"
+                                                     icon="pi pi-search"
+                                                     action="#{consultaBean.buscarPorProfesor()}"
+                                                     styleClass="btn btn-primary"
+                                                     style="background:#1c7a4f !important; border:none !important; color:white !important;"
+                                                     ajax="false" />
+                                </div>
+                            </div>
+
+                            <!-- Búsqueda por unidad de aprendizaje -->
+                            <div class="consulta-bloque">
+                                <div class="consulta-fila">
+                                    <div class="form-group">
+                                        <label class="form-label">Buscar por unidad de aprendizaje</label>
+                                        <p:selectOneMenu id="selUnidad"
+                                                         value="#{consultaBean.idUnidadSeleccionada}"
+                                                         styleClass="form-select">
+                                            <f:selectItem itemValue="#{null}" itemLabel="-- Seleccionar --" />
+                                            <f:selectItems value="#{consultaBean.unidades}"
+                                                           var="u"
+                                                           itemValue="#{u.id}"
+                                                           itemLabel="#{u.nombre}" />
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <p:commandButton value="Buscar"
+                                                     icon="pi pi-search"
+                                                     action="#{consultaBean.buscarPorUnidad()}"
+                                                     styleClass="btn btn-primary"
+                                                     style="background:#1c7a4f !important; border:none !important; color:white !important;"
+                                                     ajax="false" />
+                                </div>
+                            </div>
+
+                            <!-- 🔵 Limpiar ahora es AZUL -->
+                            <div class="asignacion-botones">
+                                <p:commandButton value="Limpiar"
+                                                 icon="pi pi-refresh"
+                                                 action="#{consultaBean.limpiar()}"
+                                                 styleClass="btn btn-secondary"
+                                                 style="background:#1e5fa8 !important; border:none !important; color:white !important;"
+                                                 ajax="false" />
+                            </div>
+
+                            <!-- Panel de edición -->
+                            <h:panelGroup rendered="#{consultaBean.asignacionSeleccionada != null}"
+                                          layout="block" styleClass="consulta-edicion">
+                                <h3 class="consulta-edicion-titulo">Modificar horario</h3>
+                                <p class="consulta-edicion-resumen">#{consultaBean.resumenModificar}</p>
+
+                                <div class="consulta-fila">
+                                    <div class="form-group">
+                                        <label class="form-label">Nuevo día</label>
+                                        <p:selectOneMenu id="selDiaModificar"
+                                                         value="#{consultaBean.diaModificar}"
+                                                         styleClass="form-select">
+                                            <f:selectItem itemValue="LUNES" itemLabel="Lunes" />
+                                            <f:selectItem itemValue="MARTES" itemLabel="Martes" />
+                                            <f:selectItem itemValue="MIERCOLES" itemLabel="Miércoles" />
+                                            <f:selectItem itemValue="JUEVES" itemLabel="Jueves" />
+                                            <f:selectItem itemValue="VIERNES" itemLabel="Viernes" />
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Nueva hora de inicio</label>
+                                        <p:selectOneMenu id="selHoraModificar"
+                                                         value="#{consultaBean.horaInicioModificar}"
+                                                         styleClass="form-select">
+                                            <f:selectItems value="#{consultaBean.horasInicio}" />
+                                        </p:selectOneMenu>
+                                    </div>
+                                </div>
+
+                                <p class="consulta-edicion-nota">
+                                    Se conserva la duración (#{consultaBean.duracionModificar}); la hora de fin se calcula sola.
+                                </p>
+
+                                <div class="asignacion-botones">
+                                    <!-- 🔴 Cancelar ahora es ROJO -->
+                                    <p:commandButton value="Cancelar"
+                                                     action="#{consultaBean.cancelarModificacion()}"
+                                                     styleClass="btn btn-danger"
+                                                     style="background:#dc2626 !important; border:none !important; color:white !important;"
+                                                     ajax="false" />
+                                    <p:commandButton value="Guardar cambios"
+                                                     action="#{consultaBean.guardarModificacion()}"
+                                                     styleClass="btn btn-primary"
+                                                     style="background:#1c7a4f !important; border:none !important; color:white !important;"
+                                                     ajax="false" />
+                                </div>
+                            </h:panelGroup>
+
+                            <!-- Resultados -->
+                            <h:panelGroup rendered="#{not empty consultaBean.resultados}">
+                                <h3 class="asignacion-title" style="font-size:1.1rem; margin-top:24px;">
+                                    Resultados (#{consultaBean.resultados.size()})
+                                </h3>
+                                <p:dataTable value="#{consultaBean.resultados}" var="a"
+                                             styleClass="profesor-table"
+                                             emptyMessage="No hay resultados">
+                                    <p:column headerText="Tipo">
+                                        <span class="tipo-badge tipo-badge-#{consultaBean.claseTipo(a)}"
+                                              title="#{consultaBean.nombreTipo(a)}">#{consultaBean.letraTipo(a)}</span>
+                                    </p:column>
+                                    <p:column headerText="Profesor">
+                                        #{a.profesor.nombre} #{a.profesor.apellidoPaterno}
+                                    </p:column>
+                                    <p:column headerText="Unidad">#{a.unidad.nombre}</p:column>
+                                    <p:column headerText="Día">#{a.diaSemana}</p:column>
+                                    <p:column headerText="Horario">#{a.horaInicio} - #{a.horaFin}</p:column>
+                                    <p:column headerText="Grupo">
+                                        <span class="codigo-bloque">#{consultaBean.codigoGrupo(a)}</span>
+                                    </p:column>
+                                    <p:column headerText="Acciones">
+                                        <div class="acciones-fila">
+                                            <!-- ⚪🟡 Editar: gris claro con borde dorado -->
+                                            <p:commandButton value="Editar"
+                                                             icon="pi pi-pencil"
+                                                             action="#{consultaBean.abrirModificar(a)}"
+                                                             styleClass="btn btn-secondary"
+                                                             style="background:#f0f0f0 !important; border:2px solid #d4af37 !important; color:#182620 !important;"
+                                                             ajax="false" />
+                                            <p:commandButton value="Eliminar"
+                                                             icon="pi pi-trash"
+                                                             action="#{consultaBean.eliminar(a)}"
+                                                             styleClass="btn btn-danger"
+                                                             style="background:#dc2626 !important; border:none !important; color:white !important;"
+                                                             ajax="false"
+                                                             onclick="if (!confirm('¿Eliminar la asignación completa? Se borrarán todos sus horarios (clase, taller y laboratorio), no solo esta fila.')) return false;" />
+                                        </div>
+                                    </p:column>
+                                </p:dataTable>
+                            </h:panelGroup>
+                        </h:form>
                     </div>
                 </h:panelGroup>
             </main>
@@ -240,27 +539,33 @@
             mostrarAlertaSiExiste();
         });
 
-        // 🆕 Mostrar alerta después del POST
         function mostrarAlertaSiExiste() {
-            var inputMensaje = document.querySelector('[id$="mensajeAlerta"]');
-            var inputTipo = document.querySelector('[id$="tipoAlerta"]');
+            procesarAlerta('asignacionForm', 'mensajeAlerta', 'tipoAlerta');
+            procesarAlerta('profesorForm', 'mensajeAlerta', 'tipoAlerta');
+            procesarAlerta('consultaForm', 'mensajeAlerta', 'tipoAlerta');
+        }
 
-            if (inputMensaje && inputMensaje.value && inputMensaje.value.trim() !== '') {
-                var mensaje = inputMensaje.value;
-                var tipo = inputTipo ? inputTipo.value : 'info';
+        function procesarAlerta(formPrefix, idMensaje, idTipo) {
+            var inputMensaje = document.querySelector('[id$="' + formPrefix + ':' + idMensaje + '"]');
+            var inputTipo = document.querySelector('[id$="' + formPrefix + ':' + idTipo + '"]');
 
-                if (tipo === 'success') {
-                    alert('✅ ' + mensaje);
-                } else if (tipo === 'error') {
-                    alert('⚠️ ' + mensaje);
-                } else {
-                    alert(mensaje);
-                }
+            if (!inputMensaje || !inputMensaje.value || inputMensaje.value.trim() === '') return;
 
-                // Limpiar los hidden
-                inputMensaje.value = '';
-                if (inputTipo) inputTipo.value = '';
+            var mensaje = inputMensaje.value;
+            var tipo = inputTipo ? inputTipo.value : 'info';
+
+            if (/^[\u2705\u26A0]/.test(mensaje)) {
+                alert(mensaje);
+            } else if (tipo === 'success') {
+                alert('✅ ' + mensaje);
+            } else if (tipo === 'error') {
+                alert('⚠️ ' + mensaje);
+            } else {
+                alert(mensaje);
             }
+
+            inputMensaje.value = '';
+            if (inputTipo) inputTipo.value = '';
         }
 
         function actualizarHorasRequeridas() {

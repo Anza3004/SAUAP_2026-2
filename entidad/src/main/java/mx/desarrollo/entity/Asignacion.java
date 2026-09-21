@@ -25,6 +25,15 @@ public class Asignacion implements Serializable {
     @JoinColumn(name = "id_unidad", nullable = false)
     private UnidadAprendizaje unidad;
 
+    @Size(max = 36)
+    @Column(name = "grupo", length = 36)
+    private String grupo;
+
+    // CLASE | TALLER | LABORATORIO. Es null en las asignaciones guardadas antes de existir este campo.
+    @Size(max = 15)
+    @Column(name = "tipo", length = 15)
+    private String tipo;
+
     @Size(max = 15)
     @NotNull
     @Column(name = "dia_semana", nullable = false, length = 15)
@@ -55,4 +64,15 @@ public class Asignacion implements Serializable {
 
     public LocalTime getHoraFin() { return horaFin; }
     public void setHoraFin(LocalTime horaFin) { this.horaFin = horaFin; }
+    public String getGrupo() {
+        return grupo;
+    }
+
+    public void setGrupo(String grupo) {
+        this.grupo = grupo;
+    }
+
+    public String getTipo() { return tipo; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
+
 }
